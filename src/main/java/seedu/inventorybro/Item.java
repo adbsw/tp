@@ -1,4 +1,4 @@
-package seedu.duke;
+package seedu.inventorybro;
 
 /**
  * Represents a task with a description and completion status.

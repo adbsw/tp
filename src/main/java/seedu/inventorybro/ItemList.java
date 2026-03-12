@@ -1,4 +1,4 @@
-package seedu.duke;
+package seedu.inventorybro;
 
 
 import java.util.ArrayList;
