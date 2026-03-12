@@ -1,4 +1,4 @@
-package seedu.duke;
+package seedu.inventorybro;
 
 public class Parser {
     public static void parse(String line, ItemList items) {
