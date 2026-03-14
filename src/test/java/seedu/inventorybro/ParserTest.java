@@ -40,4 +40,29 @@ class ParserTest {
             () -> Parser.parseAdd("addItem Apple 10", items)
         );
     }
+
+    @Test
+    void parseEdit_validCommand_itemEdited() {
+        ItemList items = new ItemList();
+        items.addItem(new Item("Apple", 10));
+
+        Parser.parse("edit 1 d/Banana q/20", items);
+
+        Item item = items.getItem(0);
+
+        assertEquals("Banana", item.getDescription());
+        assertEquals(20, item.getQuantity());
+    }
+
+    @Test
+    void parseEdit_invalidIndex_throwsException() {
+        ItemList items = new ItemList();
+        items.addItem(new Item("Apple", 10));
+
+        // Index 99 doesn't exist
+        Parser.parse("edit 99 d/Banana q/20", items);
+
+        // Item should remain unchanged
+        assertEquals("Apple", items.getItem(0).getDescription());
+    }
 }
