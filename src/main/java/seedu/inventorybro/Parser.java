@@ -22,8 +22,8 @@ public class Parser {
             return;
         }
 
-        if (line.equalsIgnoreCase("list")) {
-            parseList(items);
+        if (line.toLowerCase().startsWith("list")) {
+            parseList(line, items);
             return;
         }
 
@@ -98,7 +98,13 @@ public class Parser {
         checkIfDigit(digits.substring(start));
     }
 
-    private static void parseList(ItemList items) {
+    private static void parseList(String text, ItemList items) {
+        String[] words = text.split(" ");
+
+        if (!words[0].equalsIgnoreCase("list") || words.length > 1) {
+            throw new IllegalArgumentException("Did you mean 'list'?");
+        }
+
         if (items.isEmpty()) {
             System.out.println("Your inventory is empty.");
         }
