@@ -144,19 +144,41 @@ public class Parser {
                         "Use: editItem INDEX d/NEW_NAME q/NEW_QUANTITY");
             }
 
-            String[] parts = words[1].split("d/", 2);
-            int index = Integer.parseInt(parts[0].trim()) - 1;
+            String rest = words[1]; // e.g. "1 d/NewName q/10"
+            String[] indexSplit = rest.split(" ", 2);
+            int index = Integer.parseInt(indexSplit[0].trim()) - 1;
+
             if (index < 0 || index >= items.size()) {
                 throw new IllegalArgumentException("Invalid index.");
             }
 
-            String[] descParts = parts[1].split("q/", 2);
-            String newName = descParts[0].trim();
-            int newQuantity = Integer.parseInt(descParts[1].trim());
+            String params = indexSplit[1];
+            String newName = null;
+            Integer newQuantity = null;
+
+            if (params.contains("d/")) {
+                String afterD = params.split("d/", 2)[1];
+                newName = afterD.contains("q/")
+                        ? afterD.split("q/")[0].trim()
+                        : afterD.trim();
+            }
+
+            if (params.contains("q/")) {
+                String afterQ = params.split("q/", 2)[1].trim();
+                newQuantity = Integer.parseInt(afterQ);
+            }
+
+            if (newName == null && newQuantity == null) {
+                throw new IllegalArgumentException("Please provide at least d/ or q/.");
+            }
 
             Item item = items.getItem(index);
-            item.description = newName;
-            item.setQuantity(newQuantity);
+            if (newName != null) {
+                item.description = newName;
+            }
+            if (newQuantity != null) {
+                item.setQuantity(newQuantity);
+            }
 
             System.out.println("Item updated: " + item);
 
