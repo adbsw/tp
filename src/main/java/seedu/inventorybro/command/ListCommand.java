@@ -15,6 +15,7 @@ public class ListCommand implements Command {
      * @param input The full list command string.
      */
     public ListCommand(String input) {
+        assert input != null : "Input line should not be null";
         this.input = input;
     }
 
@@ -27,19 +28,23 @@ public class ListCommand implements Command {
     public void execute(ItemList items, Ui ui) {
         String[] words = input.split(" ");
 
-        if (!words[0].equalsIgnoreCase("list") || words.length > 1) {
-            throw new IllegalArgumentException("Did you mean 'list'?");
+        if (!words[0].equals("listItems") || words.length > 1) {
+            throw new IllegalArgumentException("Did you mean 'listItems'?");
         }
 
         if (items.isEmpty()) {
             ui.showMessage("Your inventory is empty.");
             return;
         }
+        assert !items.isEmpty() : "List of items should not be empty";
 
+        int listIndex = 0;
         ui.showMessage("Here are your current inventory items:");
         for (int i = 0; i < items.size(); i++) {
-            int listIndex = i + 1;
+            listIndex = i + 1;
             System.out.println(listIndex + ". " + items.getItem(i));
         }
+        assert listIndex == items.size() : "List index should be equal to total number " +
+                "of items in list after iterating through and printing all items";
     }
 }
