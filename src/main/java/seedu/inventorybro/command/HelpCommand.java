@@ -57,29 +57,29 @@ public class HelpCommand implements Command {
         }
 
         switch (words[1]) {
-            case "addItem":
-                info = helpAddItemCommand();
-                break;
-            case "deleteItem":
-                info = helpDeleteItemCommand();
-                break;
-            case "editItem":
-                info = helpEditItemCommand();
-                break;
-            case "transact":
-                info = helpTransactCommand();
-                break;
-            case "listItems":
-                info = helpListItemsCommand();
-                break;
-            case "help":
-                info = helpHelpCommand();
-                break;
-            case "exit":
-                info = helpExitCommand();
-                break;
-            default:
-                break;
+        case "addItem":
+            info = helpAddItemCommand();
+            break;
+        case "deleteItem":
+            info = helpDeleteItemCommand();
+            break;
+        case "editItem":
+            info = helpEditItemCommand();
+            break;
+        case "transact":
+            info = helpTransactCommand();
+            break;
+        case "listItems":
+            info = helpListItemsCommand();
+            break;
+        case "help":
+            info = helpHelpCommand();
+            break;
+        case "exit":
+            info = helpExitCommand();
+            break;
+        default:
+            break;
         }
 
         ui.showMessage(info);
