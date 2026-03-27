@@ -1,20 +1,38 @@
 package seedu.inventorybro;
 
-import java.util.Scanner;
-
 public class InventoryBro {
+    private Ui ui;
+    private ItemList items;
 
-    /**
-     * Main entry-point for the java.seedu.inventorybro.InventoryBro application.
-     */
-    public static void main(String[] args) {
-        System.out.println("InventoryBRO");
-        Scanner in = new Scanner(System.in);
-        ItemList items = new ItemList();
+    public InventoryBro() {
+        ui = new Ui();
+        items = new ItemList();
+    }
 
-        while (in.hasNextLine()) {
-            String input = in.nextLine();
-            Parser.parse(input, items);
+    public void run() {
+        ui.showWelcome();
+
+        while (true) {
+
+            String fullCommand = ui.readCommand();
+
+            if (fullCommand.isEmpty()) {
+                continue;
+            }
+
+            ui.showLine();
+            try {
+                // Pass the ui object into the parser so the commands can use it to print!
+                Parser.parse(fullCommand, items, ui);
+            } catch (IllegalArgumentException e) {
+                // Catches all the exceptions thrown by your various Commands!
+                ui.showError(e.getMessage());
+            }
+            ui.showLine();
         }
+    }
+
+    public static void main(String[] args) {
+        new InventoryBro().run();
     }
 }

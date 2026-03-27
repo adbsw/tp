@@ -1,11 +1,12 @@
 package seedu.inventorybro;
 
 /**
- * Represents an item with a description and quantity.
+ * Represents an item with a description, quantity, and price.
  */
 public class Item {
     protected String description;
     protected int quantity;
+    protected double price;
 
     /**
      * Creates an item with the given description and quantity.
@@ -14,8 +15,11 @@ public class Item {
      * @param quantity    The quantity of item.
      */
     public Item(String description, int quantity) {
+        assert description != null && !description.isEmpty() : "Description should not be null or empty";
+        assert quantity >= 0 : "Quantity should not be negative: " + quantity;
         this.description = description;
         this.quantity = quantity;
+        this.price = 0.0;
     }
 
     /**
@@ -24,8 +28,40 @@ public class Item {
      * @param quantity The quantity of item.
      */
     public void setQuantity(int quantity) {
+        assert quantity >= 0 : "Quantity should not be negative: " + quantity;
         this.quantity = quantity;
     }
+
+    /**
+     * Sets the item description.
+     *
+     * @param description The updated item description.
+     */
+    public void setDescription(String description) {
+        assert description != null && !description.isEmpty() : "Description should not be null or empty";
+        this.description = description;
+    }
+
+    /**
+     * Sets the item price.
+     *
+     * @param price The price of item.
+     */
+    //@@author vionyp
+    public void setPrice(double price) {
+        assert price >= 0 : "Price should not be negative: " + price;
+        this.price = price;
+    }
+
+    /**
+     * Returns the price of item.
+     *
+     * @return The price of item.
+     */
+    public double getPrice() {
+        return this.price;
+    }
+    //@@author
 
     /**
      * Returns the quantity of item.
@@ -35,7 +71,6 @@ public class Item {
     public int getQuantity() {
         return this.quantity;
     }
-
 
     /**
      * Returns the item in save file format.
@@ -62,9 +97,6 @@ public class Item {
      */
     @Override
     public String toString() {
-        return description + "(Quantity: " + quantity + ")";
+        return description + " (Quantity: " + quantity + ", Price: $" + String.format("%.2f", price) + ")";
     }
 }
-
-
-

@@ -1,6 +1,5 @@
 package seedu.inventorybro;
 
-
 import java.util.ArrayList;
 
 /**
@@ -26,7 +25,7 @@ public class ItemList {
     }
 
     /**
-     * Adds a item to the list.
+     * Adds an item to the list.
      *
      * @param item The item to add.
      */
@@ -41,6 +40,7 @@ public class ItemList {
      * @return The removed item.
      */
     public Item deleteItem(int index) {
+        assert index >= 0 && index < items.size() : "Index out of bounds: " + index;
         return items.remove(index);
     }
 
@@ -52,6 +52,7 @@ public class ItemList {
      * @return The item at that index.
      */
     public Item getItem(int index) {
+        assert index >= 0 && index < items.size() : "Index out of bounds: " + index;
         return items.get(index);
     }
 
