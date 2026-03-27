@@ -47,7 +47,7 @@ public class Parser {
         if (lowerCaseLine.startsWith("setprice")) {
             return new PriceCommand(trimmedLine);
         }
-        
+
         if (lowerCaseLine.startsWith("list")) {
             return new ListCommand(trimmedLine);
         }
