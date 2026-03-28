@@ -22,10 +22,11 @@ class EditCommandTest {
         ItemList items = new ItemList();
         items.addItem(new Item("Apple", 10));
 
-        new EditCommand("edit 1 d/Orange q/20").execute(items, ui);
+        new EditCommand("edit 1 d/Orange q/20 p/1.50").execute(items, ui);
 
         assertEquals("Orange", items.getItem(0).getDescription());
         assertEquals(20, items.getItem(0).getQuantity());
+        assertEquals(1.50, items.getItem(0).getPrice());
     }
 
     /**
@@ -37,10 +38,11 @@ class EditCommandTest {
         items.addItem(new Item("Apple", 10));
         items.addItem(new Item("Banana", 5));
 
-        new EditCommand("edit 2 d/Mango q/7").execute(items, ui);
+        new EditCommand("edit 2 d/Mango q/7 p/2.00").execute(items, ui);
 
         assertEquals("Mango", items.getItem(1).getDescription());
         assertEquals(7, items.getItem(1).getQuantity());
+        assertEquals(2.00, items.getItem(1).getPrice());
     }
 
     /**
@@ -53,7 +55,7 @@ class EditCommandTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommand("edit 99 d/Ghost q/0").execute(items, ui)
+                () -> new EditCommand("edit 99 d/Ghost q/0 p/0.00").execute(items, ui)
         );
 
         assertEquals("Apple", items.getItem(0).getDescription());
@@ -70,7 +72,7 @@ class EditCommandTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommand("edit 0 d/Apple q/5").execute(items, ui)
+                () -> new EditCommand("edit 0 d/Apple q/5 p/0.00").execute(items, ui)
         );
 
         assertEquals("Apple", items.getItem(0).getDescription());
@@ -87,7 +89,7 @@ class EditCommandTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommand("edit abc d/Apple q/5").execute(items, ui)
+                () -> new EditCommand("edit abc d/Apple q/5 p/0.00").execute(items, ui)
         );
 
         assertEquals("Apple", items.getItem(0).getDescription());
@@ -104,7 +106,7 @@ class EditCommandTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommand("edit 1 d/Apple q/abc").execute(items, ui)
+                () -> new EditCommand("edit 1 d/Apple q/abc p/0.00").execute(items, ui)
         );
 
         assertEquals("Apple", items.getItem(0).getDescription());
@@ -120,7 +122,7 @@ class EditCommandTest {
         items.addItem(new Item("Apple", 10));
         items.addItem(new Item("Banana", 5));
 
-        new EditCommand("edit 1 d/Orange q/99").execute(items, ui);
+        new EditCommand("edit 1 d/Orange q/99 p/0.00").execute(items, ui);
 
         assertEquals("Banana", items.getItem(1).getDescription());
         assertEquals(5, items.getItem(1).getQuantity());
