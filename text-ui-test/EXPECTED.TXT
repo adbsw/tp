@@ -54,16 +54,16 @@ Noted, BRO. I've removed this item:
 Now you have 3 items in the list.
 --------------------------------------------------
 > --------------------------------------------------
-ERROR: Invalid edit format. Use: edit INDEX d/NEW_NAME q/NEW_QUANTITY
+ERROR: Invalid edit format. Use: edit INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE
 --------------------------------------------------
 > --------------------------------------------------
 ERROR: Invalid index.
 --------------------------------------------------
 > --------------------------------------------------
-ERROR: Index and quantity must be numbers.
+ERROR: Index and quantity must be numbers, price must be a valid decimal.
 --------------------------------------------------
 > --------------------------------------------------
-Item updated: newName (Quantity: 39, Price: $0.00)
+Item updated: newName (Quantity: 39, Price: $9.99)
 --------------------------------------------------
 > --------------------------------------------------
 ERROR: Invalid transact format. Use: transact INDEX q/CHANGE_IN_QUANTITY

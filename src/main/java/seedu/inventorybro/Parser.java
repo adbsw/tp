@@ -5,7 +5,6 @@ import seedu.inventorybro.command.Command;
 import seedu.inventorybro.command.DeleteCommand;
 import seedu.inventorybro.command.EditCommand;
 import seedu.inventorybro.command.ExitCommand;
-import seedu.inventorybro.command.PriceCommand;
 import seedu.inventorybro.command.ListCommand;
 import seedu.inventorybro.command.TransactCommand;
 
@@ -42,10 +41,6 @@ public class Parser {
 
         if (lowerCaseLine.startsWith("transact")) {
             return new TransactCommand(trimmedLine);
-        }
-
-        if (lowerCaseLine.startsWith("setprice")) {
-            return new PriceCommand(trimmedLine);
         }
 
         if (lowerCaseLine.startsWith("list")) {
