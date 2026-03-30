@@ -12,7 +12,8 @@ public enum CommandWord {
     TRANSACT("transact"),
     LIST_ITEMS("listItems"),
     HELP("help"),
-    EXIT("exit");
+    EXIT("exit"),
+    FIND_ITEM("findItem");
 
     private final String word;
 
