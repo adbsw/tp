@@ -8,6 +8,11 @@ list
 lIsT all
 ListItem
 listItems
+findItem
+findItem
+findItem app
+findItem an
+findItem ghost
 delete
 deleteItem 0
 deleteItem 23
