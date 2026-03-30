@@ -37,6 +37,7 @@ help deleteItem
 help editItem
 help transact
 help listItems
+help findItem
 help help
 help exit
 exit

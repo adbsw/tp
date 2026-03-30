@@ -23,7 +23,7 @@ public class HelpCommand implements Command {
                         existing values are updated to the input values.
             findItem:   Finds an item in the current inventory list based on the keyword typed 
                         or displays message to the user that the inventory does not have item
-                        that matches keyword
+                        that matches keyword.
             transact:   Updates stock quantities after a sale or restock.
             listItems:  Displays all items currently in the inventory, or displays message
                         to the user that the inventory is empty if there are no items.
