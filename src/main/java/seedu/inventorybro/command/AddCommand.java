@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import seedu.inventorybro.Item;
 import seedu.inventorybro.ItemList;
 import seedu.inventorybro.Ui;
+import seedu.inventorybro.validator.AddCommandValidator;
 
 /**
  * Adds a new item to the inventory.
@@ -31,13 +32,10 @@ public class AddCommand implements Command {
      */
     @Override
     public void execute(ItemList items, Ui ui) {
-        Matcher matcher = ADD_COMMAND_PATTERN.matcher(input);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException(
-                    "Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY"
-            );
-        }
+        new AddCommandValidator(input).validate(items);
 
+        Matcher matcher = ADD_COMMAND_PATTERN.matcher(input);
+        assert matcher.matches();
         String name = matcher.group(1);
         int quantity = Integer.parseInt(matcher.group(2));
         Item newItem = new Item(name, quantity);

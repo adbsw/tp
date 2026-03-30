@@ -6,6 +6,7 @@ import java.util.Map;
 
 import seedu.inventorybro.ItemList;
 import seedu.inventorybro.Ui;
+import seedu.inventorybro.validator.HelpCommandValidator;
 
 //@@author adbsw
 
@@ -146,41 +147,16 @@ public class HelpCommand implements Command {
      */
     @Override
     public void execute(ItemList items, Ui ui) {
+        new HelpCommandValidator(input).validate(items);
+
         String[] words = input.split(" ");
-
-        if (!words[0].equals("help")) {
-            throw new IllegalArgumentException("Did you mean 'help'?");
-        }
-
-        String info = "";
+        String info;
         if (words.length == 1) {
             info = helpSummaryMessage;
-        } else if (isValidCommandSpecified(words)) {
+        } else {
             info = commandMessages.get(words[1]);
         }
 
         ui.showMessage(info);
-    }
-
-    /**
-     * Checks if a valid command name is specified in the input and returns true, else returns false.
-     *
-     * @param words The String array of user input.
-     * @return true if a valid command name is specified, else returns false.
-     */
-    private static boolean isValidCommandSpecified(String[] words) {
-        boolean isNotCommand = !words[1].equals("addItem") && !words[1].equals("deleteItem")
-                && !words[1].equals("editItem") && !words[1].equals("transact")
-                && !words[1].equals("listItems") && !words[1].equals("help")
-                && !words[1].equals("exit");
-
-        if (isNotCommand || !(words.length == 2)) {
-            throw new IllegalArgumentException("Invalid help format. "
-                    + "Use: help [VALID_COMMAND_NAME]"
-                    + System.lineSeparator()
-                    + "or enter 'help' to display each command name and their summaries.");
-        }
-
-        return true;
     }
 }
