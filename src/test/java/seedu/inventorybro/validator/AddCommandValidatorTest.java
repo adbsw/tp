@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.inventorybro.Item;
 import seedu.inventorybro.ItemList;
 
 //@@author kenpegrasio
@@ -50,6 +51,33 @@ class AddCommandValidatorTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new AddCommandValidator("addItem d/Apple").validate(items)
+        );
+    }
+
+    /**
+     * Verifies that adding an item whose name already exists (case-insensitive) is rejected.
+     */
+    @Test
+    void validate_duplicateName_throwsException() {
+        items.addItem(new Item("Apple", 10));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new AddCommandValidator("addItem d/apple q/5").validate(items)
+        );
+    }
+
+    /**
+     * Verifies that a name with trailing whitespace is trimmed before the duplicate check,
+     * so "Apple " and "Apple" are treated as the same item.
+     */
+    @Test
+    void validate_duplicateNameWithTrailingSpace_throwsException() {
+        items.addItem(new Item("Apple", 10));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new AddCommandValidator("addItem d/Apple  q/5").validate(items)
         );
     }
 }

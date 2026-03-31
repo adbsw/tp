@@ -44,7 +44,7 @@ public class AddCommand implements Command {
 
         Matcher matcher = ADD_COMMAND_PATTERN.matcher(input);
         matcher.matches();
-        String name = matcher.group(1);
+        String name = matcher.group(1).trim();
         int quantity = Integer.parseInt(matcher.group(2));
         assert quantity >= 0 : "Parsed quantity should be non-negative";
         Item newItem = new Item(name, quantity);

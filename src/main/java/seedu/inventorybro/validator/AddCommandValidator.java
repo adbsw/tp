@@ -1,7 +1,9 @@
 package seedu.inventorybro.validator;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import seedu.inventorybro.DuplicateItemValidator;
 import seedu.inventorybro.ItemList;
 
 //@@author kenpegrasio
@@ -23,18 +25,23 @@ public class AddCommandValidator implements Validator {
     }
 
     /**
-     * Checks that the input matches the {@code addItem d/NAME q/INITIAL_QUANTITY} pattern.
+     * Checks that the input matches the {@code addItem d/NAME q/INITIAL_QUANTITY} pattern
+     * and that no item with the same name already exists in the inventory.
      *
-     * @param items Unused; present to satisfy the {@link Validator} contract.
-     * @throws IllegalArgumentException if the input does not conform to the expected format.
+     * @param items The current inventory; used to check for duplicate names.
+     * @throws IllegalArgumentException if the input does not conform to the expected format
+     *                                  or the item name already exists.
      */
     @Override
     public void validate(ItemList items) {
         assert input != null : "Input should not be null";
-        if (!ADD_COMMAND_PATTERN.matcher(input).matches()) {
+        Matcher matcher = ADD_COMMAND_PATTERN.matcher(input);
+        if (!matcher.matches()) {
             throw new IllegalArgumentException(
                     "Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY"
             );
         }
+        String name = matcher.group(1).trim();
+        new DuplicateItemValidator().validate(name, items);
     }
 }

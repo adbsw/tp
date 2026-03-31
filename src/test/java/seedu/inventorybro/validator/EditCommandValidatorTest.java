@@ -21,7 +21,7 @@ class EditCommandValidatorTest {
         ItemList items = new ItemList();
         items.addItem(new Item("Apple", 10));
 
-        assertDoesNotThrow(() -> new EditCommandValidator("edit 1 d/Orange q/20").validate(items));
+        assertDoesNotThrow(() -> new EditCommandValidator("edit 1 d/Orange q/20 p/1.50").validate(items));
     }
 
     /**

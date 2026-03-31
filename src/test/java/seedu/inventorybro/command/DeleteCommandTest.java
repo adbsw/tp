@@ -18,6 +18,7 @@ class DeleteCommandTest {
     /**
      * Verifies that deleting a valid index removes the correct item.
      */
+    //@@author fmohamedfaras
     @Test
     void execute_validIndex_itemRemoved() {
         ItemList items = new ItemList();

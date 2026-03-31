@@ -6,8 +6,10 @@ import seedu.inventorybro.Ui;
 import seedu.inventorybro.validator.EditCommandValidator;
 
 /**
- * Updates an existing item's description and quantity.
+ * Updates an existing item's description, quantity, and price.
  */
+
+//@@author vionyp
 public class EditCommand implements Command {
     private final String input;
 
@@ -34,12 +36,16 @@ public class EditCommand implements Command {
         int index = Integer.parseInt(parts[0].trim()) - 1;
         String[] descParts = parts[1].split("q/", 2);
         String newName = descParts[0].trim();
-        int newQuantity = Integer.parseInt(descParts[1].trim());
+        String[] quantityParts = descParts[1].split("p/", 2);
+        int newQuantity = Integer.parseInt(quantityParts[0].trim());
+        double newPrice = Double.parseDouble(quantityParts[1].trim());
 
         Item item = items.getItem(index);
         item.setDescription(newName);
         item.setQuantity(newQuantity);
+        item.setPrice(newPrice);
 
         ui.showMessage("Item updated: " + item);
     }
 }
+//@@author
