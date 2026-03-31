@@ -10,7 +10,6 @@ import seedu.inventorybro.command.ListCommand;
 import seedu.inventorybro.command.TransactCommand;
 import seedu.inventorybro.command.FindCommand;
 
-
 public class Parser {
     public static void parse(String line, ItemList items, Ui ui) {
         assert line != null : "Input line should not be null";
@@ -65,4 +64,3 @@ public class Parser {
         return null;
     }
 }
-
