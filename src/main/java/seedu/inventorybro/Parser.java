@@ -8,7 +8,7 @@ import seedu.inventorybro.command.ExitCommand;
 import seedu.inventorybro.command.HelpCommand;
 import seedu.inventorybro.command.ListCommand;
 import seedu.inventorybro.command.TransactCommand;
-
+import seedu.inventorybro.command.FindCommand;
 
 public class Parser {
     public static void parse(String line, ItemList items, Ui ui) {
@@ -49,6 +49,10 @@ public class Parser {
             return new ListCommand(trimmedLine);
         }
 
+        if (lowerCaseLine.startsWith("find")) {
+            return new FindCommand(trimmedLine);
+        }
+
         if (lowerCaseLine.startsWith("help")) {
             return new HelpCommand(trimmedLine);
         }
@@ -60,4 +64,3 @@ public class Parser {
         return null;
     }
 }
-
