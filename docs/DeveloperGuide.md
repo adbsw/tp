@@ -70,7 +70,7 @@ The `Parser` is responsible for routing user input to the correct command.
 
 ### Deleting an Item
 
-**Figure 4: Delete Command Class Diagram**  
+**Figure 4: Delete Command Class Diagram**
 ![Delete Class Diagram](diagrams/DeleteClassDiagram.png)
 
 **Step-by-step Execution:**
@@ -101,7 +101,6 @@ The `Parser` is responsible for routing user input to the correct command.
 
 **Figure 7: Find Command Sequence Diagram**  
 ![Find Sequence Diagram](diagrams/FindSequenceDiagram.png)
-
 
 ### Transacting an Item
 
@@ -145,8 +144,28 @@ The `ShowTransactionHistoryCommand` retrieves and displays all past transactions
 **Figure 11: Show History Sequence Diagram**  
 ![Show History Sequence Diagram](diagrams/ShowTransactionHistoryCommandSequenceDiagram.png)
 
----
+### Viewing list of items in the inventory
 
+**Step-by-step Execution:**
+1. When the user inputs `listItems`, the parser instantiates a new `ListCommand` with the raw input string.
+2. The `execute` method of `ListCommand` is called.
+3. The `execute` method creates `ListCommandValidator` with the raw input string and calls the `validate` method.
+4. The `validate` method checks that the raw input string follows the correct format for `listItems` command. If the correct format is not followed, it will throw an `IllegalArgumentException` and halt the execution.
+5. Control is returned to the `execute` method which checks if the inventory list is empty and passes a message that the inventory is empty to the `ui` to display to the user.
+6. Otherwise, it passes the list of items in the inventory to the `ui` to display to the user.
+
+### Viewing help instructions of how to use commands
+
+**Step-by-step Execution:**
+1. The user inputs `help` or specifies a particular command and inputs `help [command_name]`.
+2. The parser instantiates a new `HelpCommand` with the raw input string and the `execute` method is called.
+3. The `execute` method creates `HelpCommandValidator` with the raw input string and calls the `validate` method.
+4. The `validate` method checks that the raw input string follows the correct format for the `help` command. If an invalid command name is given or there are more than one command name specified, an `IllegalArgumentException` is thrown and execution is halted.
+5. The `execute` method then checks the raw input string if a particular command name is specified:
+    * If yes, then the detailed instruction of that particular command is passed to the `ui` to be displayed to the user.
+    * If no, which means the user input is only `help`, then the command names and their summaries are passed to the `ui` to display to the user.
+
+---
 ### Storage System
 
 The storage system is responsible for persisting both inventory data and transaction history.
