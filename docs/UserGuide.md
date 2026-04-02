@@ -293,18 +293,18 @@ If you accidentally misspell a command, InventoryBRO will attempt to detect the 
 | **Find item** | `findItem KEYWORD` | `findItem apple` |
 | **Filter items** | `filterItem FIELD OP VALUE [AND\|OR ...]` | `filterItem quantity > 10` |
 | **Record transaction** | `transact INDEX q/CHANGE` | `transact 1 q/-3` |
+| **View History** | `showHistory` | `showHistory` |
 | **Get Help** | `help` | `help` |
 | **Exit** | `exit` | `exit` |
 
 ---
 
-## 🔮 Scope of v1.0
-InventoryBRO v1.0 officially supports:
+## Scope of v2.0
+InventoryBRO v2.0 officially supports:
 * Basic inventory tracking and quantity updates
 * Viewing current stock & finding specific items
 * Typo suggestions & Command Tab-autocompletion
 * Automatic background saving
 
 **Planned for Future Versions:**
-* Add price tracking to items
 * Low-stock automated alerts
