@@ -29,25 +29,24 @@ Format: `listItems`
 
 ---
 
-### Edit an item: `edit`
-Updates an existing item's name and quantity.
+### Edit an item: `editItem`
+Updates an existing item's name, quantity, and price.
 
-Format: `edit INDEX d/NEW_NAME q/NEW_QUANTITY`
+Format: `editItem INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE`
 
 * `INDEX` is the item number shown in `listItems` (starts from 1).
+* `NEW_PRICE` must be a non-negative number.
 
-Example: `edit 1 d/Green Apple q/20`
+Example: `editItem 1 d/Green Apple q/20 p/1.50`
 
 ---
 
-### Set item price: `setPrice`
-Sets the price of an existing item.
+### Find an item: `findItem`
+Finds all items whose name contains the given keyword. The search is case-insensitive.
 
-Format: `setPrice INDEX p/PRICE`
+Format: `findItem KEYWORD`
 
-* `PRICE` must be a non-negative number.
-
-Example: `setPrice 1 p/1.50`
+Example: `findItem apple`
 
 ---
 
@@ -71,6 +70,15 @@ Example: `deleteItem 1`
 
 ---
 
+### Get help: `help`
+Displays a summary of all commands, or detailed info on a specific command.
+
+Format: `help` or `help COMMAND_NAME`
+
+Example: `help addItem`
+
+---
+
 ### Exit: `exit`
 Exits the application.
 
@@ -86,12 +94,13 @@ Format: `exit`
 
 ## Command Summary
 
-| Command    | Format                                  |
-|------------|-----------------------------------------|
-| Add item   | `addItem d/NAME q/QUANTITY`             |
-| List items | `listItems`                             |
-| Edit item  | `edit INDEX d/NEW_NAME q/NEW_QUANTITY`  |
-| Set price  | `setPrice INDEX p/PRICE`               |
-| Transact   | `transact INDEX q/CHANGE`              |
-| Delete     | `deleteItem INDEX`                      |
-| Exit       | `exit`                                  |
+| Command    | Format                                             |
+|------------|----------------------------------------------------|
+| Add item   | `addItem d/NAME q/QUANTITY`                        |
+| List items | `listItems`                                        |
+| Edit item  | `editItem INDEX d/NEW_NAME q/NEW_QUANTITY p/PRICE` |
+| Find item  | `findItem KEYWORD`                                 |
+| Transact   | `transact INDEX q/CHANGE`                          |
+| Delete     | `deleteItem INDEX`                                 |
+| Help       | `help` or `help COMMAND_NAME`                      |
+| Exit
