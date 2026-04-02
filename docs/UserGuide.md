@@ -22,7 +22,7 @@ If you prefer typing commands instead of clicking buttons, InventoryBRO allows y
 ## Notes About Command Format
 * Words in `UPPER_CASE` represent parameters supplied by the user.
     * *Example:* `addItem d/NAME q/QUANTITY`
-* Parameters prefixed with letters (e.g., `d/`, `q/`) must be included exactly as shown.
+* Parameters prefixed with letters (e.g., `d/`, `q/`, `p/`) must be included exactly as shown.
 * Parameters can be provided in any order unless stated otherwise.
 * Commands are **case-insensitive**. Typing `add` and `ADD` will both execute the same action.
 * **INDEX** refers to the number shown in the displayed item list and must be a positive integer (1, 2, 3, ...).
@@ -64,24 +64,29 @@ Deletes an item permanently from the inventory.
   ```
 
 ### 3. Editing an Item: `editItem`
-Edits the name and/or quantity of an item based on its index. At least one of the optional fields must be provided. Existing values will be overwritten.
+Edits the name, quantity, and/or price of an existing item based on its index. All three fields must be provided. Existing values will be overwritten by the new values supplied.
 
-* **Format:** `editItem INDEX (n/NAME) (q/QUANTITY)`
+* **Format:** `editItem INDEX d/NAME q/QUANTITY p/PRICE`
+
+| Parameter | Description |
+| :--- | :--- |
+| `INDEX` | The number of the item as shown in `listItems`. Must be a positive integer. |
+| `d/NAME` | The new name/description for the item. |
+| `q/QUANTITY` | The new quantity. Must be a non-negative integer. |
+| `p/PRICE` | The new price. Must be a non-negative decimal (e.g., `1.50`). |
+
 * **Examples & Output:**
   ```text
-  > editItem 1 n/new Coke Can
-  Item edited:
-  1. new Coke Can (Quantity: 50)
+  > editItem 1 d/New Coke Can q/50 p/1.50
+  Item updated: 1. New Coke Can (Quantity: 50, Price: $1.50)
 
-  > editItem 1 q/200
-  Item edited:
-  1. new Coke Can (Quantity: 200)
-
-  > editItem 1 n/Coke Can q/50 
-  Item edited:
-  1. Coke Can (Quantity: 50)
+  > editItem 2 d/Sprite Bottle q/30 p/0.00
+  Item updated: 2. Sprite Bottle (Quantity: 30, Price: $0.00)
   ```
-  ### 4. Viewing All Items: `listItems`
+
+> **Note:** All three fields (`d/`, `q/`, `p/`) must be provided together. If you only want to update the price, you still need to re-enter the current name and quantity.
+
+### 4. Viewing All Items: `listItems`
 Displays a numbered list of all items currently in your inventory.
 
 * **Format:** `listItems`
@@ -175,12 +180,10 @@ Displays a quick-reference list of all available commands, or provides detailed 
       ```text
       addItem:
       Adds a new item of a given name and quantity to the current inventory list.
-  
+
       Example usage: addItem d/Apples q/10
       This adds an item named 'Apples' of quantity '10' to the inventory list.
       ```
-
-* **Format:** `help`
 
 ### 9. Exiting the Program: `exit`
 Safely closes the application.
@@ -259,7 +262,7 @@ If you accidentally misspell a command, InventoryBRO will attempt to detect the 
 | :--- | :--- | :--- |
 | **Add item** | `addItem d/NAME q/QUANTITY` | `addItem d/Coke q/50` |
 | **Delete item** | `deleteItem INDEX` | `deleteItem 2` |
-| **Edit item** | `editItem INDEX (n/NAME) (q/QUANTITY)` | `editItem 2 n/New Coke Name` |
+| **Edit item** | `editItem INDEX d/NAME q/QUANTITY p/PRICE` | `editItem 1 d/Coke Can q/50 p/1.50` |
 | **List items** | `listItems` | `listItems` |
 | **Find item** | `findItem KEYWORD` | `findItem apple` |
 | **Filter items** | `filterItem FIELD OP VALUE [AND\|OR ...]` | `filterItem quantity > 10` |
