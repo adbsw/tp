@@ -48,4 +48,13 @@ help listItems
 help findItem
 help help
 help exit
+editItem 1 d/apples q/283 p/9
+editItem 2 d/oranges q/2 p/4
+editItem 3 d/bananas q/65 p/6
+listItems quantity
+listItems quantity high extraWord
+listItems quantity high
+listItems quantity low
+listItems price high
+listItems price low
 exit
