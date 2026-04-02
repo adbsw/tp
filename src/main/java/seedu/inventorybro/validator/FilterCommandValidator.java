@@ -14,11 +14,12 @@ import seedu.inventorybro.ItemList;
  * <ul>
  *   <li>{@code description} values must be enclosed in single quotes (e.g. {@code 'Apple'})</li>
  *   <li>{@code quantity} values must be a non-negative integer (e.g. {@code 10})</li>
+ *   <li>{@code price} values must be a non-negative integer (e.g. {@code 5})</li>
  * </ul>
  */
 public class FilterCommandValidator implements Validator {
     private static final Pattern PREDICATE_PATTERN =
-            Pattern.compile("(description|quantity) (=|<|>) ('.*?'|[^\\s']+)");
+            Pattern.compile("(description|quantity|price) (=|<|>) ('.*?'|[^\\s']+)");
     private static final Pattern STRING_VALUE_PATTERN = Pattern.compile("^'.*'$");
     private static final Pattern NONNEG_INT_PATTERN = Pattern.compile("^\\d+$");
 
@@ -50,7 +51,7 @@ public class FilterCommandValidator implements Validator {
         if (!input.startsWith("filterItem ")) {
             throw new IllegalArgumentException(
                     "Invalid filterItem format! Use: filterItem description =/</> 'VALUE'"
-                            + " or filterItem quantity =/</> VALUE"
+                            + " or filterItem quantity =/</> VALUE or filterItem price =/</> VALUE"
             );
         }
 
@@ -68,7 +69,7 @@ public class FilterCommandValidator implements Validator {
         if (predicates.isEmpty()) {
             throw new IllegalArgumentException(
                     "Invalid filterItem format! Use: filterItem description =/</> 'VALUE'"
-                            + " or filterItem quantity =/</> VALUE"
+                            + " or filterItem quantity =/</> VALUE or filterItem price =/</> VALUE"
             );
         }
 
@@ -142,6 +143,12 @@ public class FilterCommandValidator implements Validator {
             throw new IllegalArgumentException(
                     "Quantity value must be a non-negative integer."
                             + " Example: filterItem quantity > 10"
+            );
+        }
+        if (field.equals("price") && !NONNEG_INT_PATTERN.matcher(value).matches()) {
+            throw new IllegalArgumentException(
+                    "Price value must be a non-negative integer."
+                            + " Example: filterItem price > 5"
             );
         }
     }

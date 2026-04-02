@@ -39,9 +39,15 @@ class FilterCommandTest {
 
     private ItemList buildItems() {
         ItemList items = new ItemList();
-        items.addItem(new Item("Apple", 10));
-        items.addItem(new Item("Banana", 5));
-        items.addItem(new Item("Cherry", 20));
+        Item apple = new Item("Apple", 10);
+        apple.setPrice(15);
+        Item banana = new Item("Banana", 5);
+        banana.setPrice(8);
+        Item cherry = new Item("Cherry", 20);
+        cherry.setPrice(3);
+        items.addItem(apple);
+        items.addItem(banana);
+        items.addItem(cherry);
         return items;
     }
 
@@ -53,7 +59,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem description = 'Apple'").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -65,7 +71,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem description < 'Banana'").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -77,7 +83,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem description > 'Banana'").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Cherry (Quantity: 20)" + System.lineSeparator();
+                + "1. Cherry (Quantity: 20, Price: $3.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -93,7 +99,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem description = 'Green Apple'").execute(items, ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Green Apple (Quantity: 15)" + System.lineSeparator();
+                + "1. Green Apple (Quantity: 15, Price: $0.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -105,7 +111,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem quantity = 10").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -117,7 +123,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem quantity < 10").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Banana (Quantity: 5)" + System.lineSeparator();
+                + "1. Banana (Quantity: 5, Price: $8.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -129,7 +135,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem quantity > 10").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Cherry (Quantity: 20)" + System.lineSeparator();
+                + "1. Cherry (Quantity: 20, Price: $3.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -152,9 +158,9 @@ class FilterCommandTest {
         new FilterCommand("filterItem quantity > 4").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator()
-                + "2. Banana (Quantity: 5)" + System.lineSeparator()
-                + "3. Cherry (Quantity: 20)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator()
+                + "2. Banana (Quantity: 5, Price: $8.00)" + System.lineSeparator()
+                + "3. Cherry (Quantity: 20, Price: $3.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -168,7 +174,7 @@ class FilterCommandTest {
         new FilterCommand("filterItem quantity > 5 AND quantity < 15").execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -195,8 +201,8 @@ class FilterCommandTest {
                 .execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator()
-                + "2. Cherry (Quantity: 20)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator()
+                + "2. Cherry (Quantity: 20, Price: $3.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -214,8 +220,8 @@ class FilterCommandTest {
                 .execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator()
-                + "2. Cherry (Quantity: 20)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator()
+                + "2. Cherry (Quantity: 20, Price: $3.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 
@@ -231,8 +237,74 @@ class FilterCommandTest {
                 .execute(buildItems(), ui);
 
         String expected = "Here are the filtered items:" + System.lineSeparator()
-                + "1. Apple (Quantity: 10)" + System.lineSeparator()
-                + "2. Banana (Quantity: 5)" + System.lineSeparator();
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator()
+                + "2. Banana (Quantity: 5, Price: $8.00)" + System.lineSeparator();
+        assertEquals(expected, outContent.toString());
+    }
+
+    // ── Price filter tests ────────────────────────────────────────────────────
+
+    /**
+     * Verifies that filtering by price equality returns only the item with that exact price.
+     * Apple has price=15; only Apple should be returned.
+     */
+    @Test
+    void execute_priceEquals_returnsExactMatch() {
+        new FilterCommand("filterItem price = 15").execute(buildItems(), ui);
+
+        String expected = "Here are the filtered items:" + System.lineSeparator()
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator();
+        assertEquals(expected, outContent.toString());
+    }
+
+    /**
+     * Verifies that filtering by price less-than returns items with a lower price.
+     * Prices: Apple=15, Banana=8, Cherry=3. price < 8 returns only Cherry.
+     */
+    @Test
+    void execute_priceLessThan_returnsItemsBelow() {
+        new FilterCommand("filterItem price < 8").execute(buildItems(), ui);
+
+        String expected = "Here are the filtered items:" + System.lineSeparator()
+                + "1. Cherry (Quantity: 20, Price: $3.00)" + System.lineSeparator();
+        assertEquals(expected, outContent.toString());
+    }
+
+    /**
+     * Verifies that filtering by price greater-than returns items with a higher price.
+     * Prices: Apple=15, Banana=8, Cherry=3. price > 8 returns only Apple.
+     */
+    @Test
+    void execute_priceGreaterThan_returnsItemsAbove() {
+        new FilterCommand("filterItem price > 8").execute(buildItems(), ui);
+
+        String expected = "Here are the filtered items:" + System.lineSeparator()
+                + "1. Apple (Quantity: 10, Price: $15.00)" + System.lineSeparator();
+        assertEquals(expected, outContent.toString());
+    }
+
+    /**
+     * Verifies that a price filter with no matches shows the no-match message.
+     */
+    @Test
+    void execute_priceFilter_noMatch() {
+        new FilterCommand("filterItem price = 99").execute(buildItems(), ui);
+
+        String expected = "No items match the given filter." + System.lineSeparator();
+        assertEquals(expected, outContent.toString());
+    }
+
+    /**
+     * Verifies that price can be combined with quantity using AND.
+     * price < 15 AND quantity > 3 matches Banana (price=8, qty=5) and Cherry (price=3, qty=20).
+     */
+    @Test
+    void execute_priceAndQuantityFilter_returnsCorrectItems() {
+        new FilterCommand("filterItem price < 15 AND quantity > 3").execute(buildItems(), ui);
+
+        String expected = "Here are the filtered items:" + System.lineSeparator()
+                + "1. Banana (Quantity: 5, Price: $8.00)" + System.lineSeparator()
+                + "2. Cherry (Quantity: 20, Price: $3.00)" + System.lineSeparator();
         assertEquals(expected, outContent.toString());
     }
 }

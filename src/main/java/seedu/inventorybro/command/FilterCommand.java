@@ -18,12 +18,12 @@ import seedu.inventorybro.validator.FilterCommandValidator;
  * consecutive predicates joined by {@code AND} form a group; an item passes if it satisfies
  * every predicate in at least one group.</p>
  *
- * <p>Supports {@code description} (lexicographic comparison) and {@code quantity}
- * (numeric comparison).</p>
+ * <p>Supports {@code description} (lexicographic comparison), {@code quantity}
+ * (numeric comparison), and {@code price} (integer comparison).</p>
  */
 public class FilterCommand implements Command {
     private static final Pattern PREDICATE_PATTERN =
-            Pattern.compile("(description|quantity) (=|<|>) ('.*?'|[^\\s']+)");
+            Pattern.compile("(description|quantity|price) (=|<|>) ('.*?'|[^\\s']+)");
     private static final Pattern STRING_VALUE_PATTERN = Pattern.compile("^'(.*)'$");
 
     private final String input;
@@ -167,7 +167,7 @@ public class FilterCommand implements Command {
      * For {@code quantity}, uses {@link Integer#compare}.
      *
      * @param item     The item to test.
-     * @param field    Either {@code "description"} or {@code "quantity"}.
+     * @param field    One of {@code "description"}, {@code "quantity"}, or {@code "price"}.
      * @param operator One of {@code "="}, {@code "<"}, or {@code ">"}.
      * @param rawValue The raw value token from the input string.
      * @return true if the item's field value satisfies the operator against {@code rawValue}.
@@ -177,6 +177,9 @@ public class FilterCommand implements Command {
             Matcher valueMatcher = STRING_VALUE_PATTERN.matcher(rawValue);
             valueMatcher.matches();
             return satisfiesOperator(item.getDescription().compareTo(valueMatcher.group(1)), operator);
+        }
+        if (field.equals("price")) {
+            return satisfiesOperator(Integer.compare((int) item.getPrice(), Integer.parseInt(rawValue)), operator);
         }
         return satisfiesOperator(Integer.compare(item.getQuantity(), Integer.parseInt(rawValue)), operator);
     }

@@ -85,6 +85,33 @@ class FilterCommandValidatorTest {
                 new FilterCommandValidator("filterItem quantity > 3").validate(buildItems()));
     }
 
+    /**
+     * Verifies that a valid price equality filter passes validation.
+     */
+    @Test
+    void validate_priceEquals_noException() {
+        assertDoesNotThrow(() ->
+                new FilterCommandValidator("filterItem price = 10").validate(buildItems()));
+    }
+
+    /**
+     * Verifies that a valid price less-than filter passes validation.
+     */
+    @Test
+    void validate_priceLessThan_noException() {
+        assertDoesNotThrow(() ->
+                new FilterCommandValidator("filterItem price < 20").validate(buildItems()));
+    }
+
+    /**
+     * Verifies that a valid price greater-than filter passes validation.
+     */
+    @Test
+    void validate_priceGreaterThan_noException() {
+        assertDoesNotThrow(() ->
+                new FilterCommandValidator("filterItem price > 3").validate(buildItems()));
+    }
+
     // ── Single-predicate: invalid inputs ─────────────────────────────────────
 
     /**
@@ -139,6 +166,24 @@ class FilterCommandValidatorTest {
     void validate_negativeQuantity_throwsException() {
         assertThrows(IllegalArgumentException.class,
                 () -> new FilterCommandValidator("filterItem quantity = -5").validate(buildItems()));
+    }
+
+    /**
+     * Verifies that a non-integer price value is rejected.
+     */
+    @Test
+    void validate_priceValueNonInteger_throwsException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new FilterCommandValidator("filterItem price = abc").validate(buildItems()));
+    }
+
+    /**
+     * Verifies that a negative price value is rejected.
+     */
+    @Test
+    void validate_negativePrice_throwsException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new FilterCommandValidator("filterItem price = -5").validate(buildItems()));
     }
 
     // ── Multi-predicate: valid inputs ─────────────────────────────────────────
