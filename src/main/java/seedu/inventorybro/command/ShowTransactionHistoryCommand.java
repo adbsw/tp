@@ -3,9 +3,11 @@ package seedu.inventorybro.command;
 import seedu.inventorybro.ItemList;
 import seedu.inventorybro.Ui;
 import seedu.inventorybro.storage.TransactionStorage;
+import seedu.inventorybro.validator.ShowTransactionHistoryCommandValidator;
 
 import java.util.ArrayList;
 
+//@@author elliotjohnwu
 /**
  * Displays all transaction history from the default storage file.
  */
@@ -27,6 +29,7 @@ public class ShowTransactionHistoryCommand implements Command {
 
     @Override
     public void execute(ItemList items, Ui ui) {
+        new ShowTransactionHistoryCommandValidator(input).validate(items);
         ArrayList<String> history = transactionStorage.load();
 
         if (history.isEmpty()) {
