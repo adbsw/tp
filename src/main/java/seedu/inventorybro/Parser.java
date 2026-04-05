@@ -40,7 +40,9 @@ public class Parser {
             return new AddCommand(trimmedLine);
         case "deleteitem":
             return new DeleteCommand(trimmedLine);
-        case "edititem":
+        case "editname":
+        case "editquantity":
+        case "editprice":
             return new EditCommand(trimmedLine);
         case "transact":
             return new TransactCommand(trimmedLine);

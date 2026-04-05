@@ -63,33 +63,33 @@ Deletes an item permanently from the inventory.
   Now you have 3 items in the list.
   ```
 
-### 3. Editing an Item: `editItem`
-Edits the name, quantity, and/or price of an existing item based on its index. All three fields must be provided. Existing values will be overwritten by the new values supplied.
+### 3. Editing an Item: `editName` | `editQuantity` | `editPrice`
+Edits a specific field of an existing item. Each command updates only one field at a time.
 
-* **Format:** `editItem INDEX d/NAME q/QUANTITY p/PRICE`
+* **Edit Name Format:** `editName INDEX d/NEW_NAME`
+* **Edit Quantity Format:** `editQuantity INDEX q/NEW_QUANTITY`  
+* **Edit Price Format:** `editPrice INDEX p/NEW_PRICE`
 
 | Parameter | Description |
 | :--- | :--- |
 | `INDEX` | The number of the item as shown in `listItems`. Must be a positive integer. |
-| `d/NAME` | The new name/description for the item. |
-| `q/QUANTITY` | The new quantity. Must be a non-negative integer. |
-| `p/PRICE` | The new price. Must be a non-negative decimal (e.g., `1.50`). |
+| `d/NEW_NAME` | The new name for the item. Cannot be empty. |
+| `q/NEW_QUANTITY` | The new quantity. Must be a non-negative integer. |
+| `p/NEW_PRICE` | The new price. Must be a non-negative decimal (e.g., `1.50`). |
 
-* **Examples & Output:**
-  ```text
-  > editItem 1 d/New Coke Can q/50 p/1.50
-  Item updated: 1. New Coke Can (Quantity: 50, Price: $1.50)
+* **Examples:**
+```text
+  > editName 1 d/Coke Can
+  Item name updated: Coke Can (Quantity: 50, Price: $1.50)
 
-  > editItem 2 d/Sprite Bottle q/30 p/0.00
-  Item updated: 2. Sprite Bottle (Quantity: 30, Price: $0.00)
-  ```
+  > editQuantity 1 q/100
+  Item quantity updated: Coke Can (Quantity: 100, Price: $1.50)
 
-> **Note:** All three fields (`d/`, `q/`, `p/`) must be provided together. If you only want to update the price, you still need to re-enter the current name and quantity.
+  > editPrice 1 p/2.50
+  Item price updated: Coke Can (Quantity: 100, Price: $2.50)
+```
 
-> **Tip:** To update only the price of an item, re-enter the current name and quantity with the new price.
-> For example: `editItem 1 d/Coke Can q/50 p/2.50` updates only the price while keeping the name and quantity the same.
-
-> **Price Display:** Prices are shown in `$X.XX` format. All items start with a default price of `$0.00` until updated via `editItem`.
+> **Note:** Each command updates only one field. Use multiple commands if you want to update more than one field.
 
 ### 4. Viewing All Items: `listItems`
 Displays a numbered list of all items currently in your inventory.
@@ -219,9 +219,6 @@ Displays a quick-reference list of all available commands, or provides detailed 
       This adds an item named 'Apples' of quantity '10' to the inventory list.
       ```
 
-### 9. Exiting the Program: `exit`
-* **Format:** `help`
-
 ### 10. Exiting the Program: `exit`
 Safely closes the application.
 
@@ -299,7 +296,9 @@ If you accidentally misspell a command, InventoryBRO will attempt to detect the 
 | :--- | :--- | :--- |
 | **Add item** | `addItem d/NAME q/QUANTITY` | `addItem d/Coke q/50` |
 | **Delete item** | `deleteItem INDEX` | `deleteItem 2` |
-| **Edit item** | `editItem INDEX d/NAME q/QUANTITY p/PRICE` | `editItem 1 d/Coke Can q/50 p/1.50` |
+| **Edit name** | `editName INDEX d/NAME` | `editName 1 d/Coke Can` |
+| **Edit quantity** | `editQuantity INDEX q/QUANTITY` | `editQuantity 1 q/100` |
+| **Edit price** | `editPrice INDEX p/PRICE` | `editPrice 1 p/2.50` |
 | **List items** | `listItems` | `listItems` |
 | **Find item** | `findItem KEYWORD` | `findItem apple` |
 | **Filter items** | `filterItem FIELD OP VALUE [AND\|OR ...]` | `filterItem quantity > 10` |
@@ -319,4 +318,3 @@ InventoryBRO v2.0 officially supports:
 **Planned for Future Versions:**
 * Add price tracking to items
 * Low-stock automated alerts
-* Edit individual fields for each item instead of requiring all fields

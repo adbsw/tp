@@ -137,24 +137,24 @@ The add mechanism is handled by the `AddCommand` class. It validates the input, 
 
 ### Editing an Item
 
-The edit mechanism is handled by the `EditCommand` class. It validates the input, then updates an existing item's **description**, **quantity**, and **price** in the inventory, identified by its 1-based list index.
+The edit mechanism is handled by the `EditCommand` class. It supports three sub-commands — `editName`, `editQuantity`, and `editPrice` — each updating only one field of an existing item at a time, identified by its 1-based list index.
 
 **Figure 16b: Edit Command Class Diagram**
 ![Edit Command Class Diagram](diagrams/EditCommandClassDiagram.png)
 
 **Step-by-step Execution:**
-1. The user inputs a command such as `editItem 2 d/Orange Juice q/50 p/3.50`.
-2. `Parser` matches the `editItem` prefix and instantiates a new `EditCommand` with the raw input string.
+1. The user inputs a command such as `editName 1 d/Orange Juice`, `editQuantity 1 q/50`, or `editPrice 1 p/3.50`.
+2. `Parser` matches the first word (`editname`, `editquantity`, or `editprice`) and instantiates a new `EditCommand` with the raw input string.
 3. `Parser` calls `execute(items, ui)` on the `EditCommand`.
-4. `EditCommand.execute()` immediately creates a new `EditCommandValidator` and calls `validate(items)`. If the format is invalid or the index is out of bounds, an `IllegalArgumentException` is thrown and execution halts.
-5. If validation passes, the input string is parsed using a chain of `split()` calls to extract:
-   * **INDEX** — the target item's 1-based position, converted to a 0-based index.
-   * **NAME** — the new item description (after `d/`).
-   * **QUANTITY** — the new quantity as an `int` (after `q/`).
-   * **PRICE** — the new price as a `double` (after `p/`).
-6. The target `Item` is retrieved from `ItemList` via `items.getItem(index)`.
-7. The item's fields are updated in-place via `item.setDescription(newName)`, `item.setQuantity(newQuantity)`, and `item.setPrice(newPrice)`.
-8. `ui.showMessage("Item updated: " + item)` confirms the update to the user.
+4. `EditCommand.execute()` reads the first word of the input to determine which sub-command to invoke (`editName`, `editQuantity`, or `editPrice`).
+5. The appropriate private method is called with the remaining arguments:
+   * `editName` — extracts the new name after `d/` and calls `item.setDescription(newName)`.
+   * `editQuantity` — extracts the new quantity after `q/` and calls `item.setQuantity(newQuantity)`.
+   * `editPrice` — extracts the new price after `p/` and calls `item.setPrice(newPrice)`.
+6. In each sub-method, the index is parsed and validated. If out of bounds, an `IllegalArgumentException` is thrown.
+7. Each value is validated (name cannot be empty, quantity/price cannot be negative).
+8. The target `Item` is retrieved via `items.getItem(index)` and updated in-place.
+9. `ui.showMessage(...)` confirms the update to the user.
 
 **Figure 16c: Edit Command Sequence Diagram**
 ```puml
@@ -162,51 +162,46 @@ The edit mechanism is handled by the `EditCommand` class. It validates the input
 actor User
 participant "Parser" as P
 participant "EditCommand" as EC
-participant "EditCommandValidator" as ECV
 participant "ItemList" as IL
 participant "Item" as I
 participant "Ui" as UI
 
-User -> P : parse("editItem 2 d/Orange q/50 p/3.50")
+User -> P : parse("editName 1 d/Orange Juice")
 P -> EC : new EditCommand(input)
 P -> EC : execute(items, ui)
-EC -> ECV : new EditCommandValidator(input)
-EC -> ECV : validate(items)
+EC -> EC : editName(args, items, ui)
 EC -> IL : getItem(index)
 IL --> EC : item
 EC -> I : setDescription(newName)
-EC -> I : setQuantity(newQuantity)
-EC -> I : setPrice(newPrice)
-EC -> UI : showMessage("Item updated: ...")
+EC -> UI : showMessage("Item name updated: ...")
 @enduml
 ```
 
-The parsing logic extracts each field sequentially:
+The parsing logic routes to the correct sub-method based on the first word:
 ```java
 String[] words = input.split(" ", 2);
-// words[0] = "editItem", words[1] = "2 d/Orange q/50 p/3.50"
+String commandType = words[0].toLowerCase();
+// commandType = "editname", "editquantity", or "editprice"
 
-String[] parts = words[1].split("d/", 2);
-int index = Integer.parseInt(parts[0].trim()) - 1;  // 0-based index
-
-String[] descParts = parts[1].split("q/", 2);
-String newName = descParts[0].trim();               // "Orange"
-
-String[] quantityParts = descParts[1].split("p/", 2);
-int newQuantity = Integer.parseInt(quantityParts[0].trim());   // 50
-double newPrice = Double.parseDouble(quantityParts[1].trim()); // 3.50
+if (commandType.equals("editname")) {
+    editName(words[1], items, ui);       // extracts after d/
+} else if (commandType.equals("editquantity")) {
+    editQuantity(words[1], items, ui);   // extracts after q/
+} else if (commandType.equals("editprice")) {
+    editPrice(words[1], items, ui);      // extracts after p/
+}
 ```
 
-All validation is delegated to `EditCommandValidator` **before** any parsing occurs, keeping `EditCommand` focused purely on execution.
+Each sub-method handles its own validation and parsing independently, keeping the logic clean and focused.
 
 **Design Considerations:**
 
 | Approach | Pros | Cons |
 |---|---|---|
-| Current: all 3 fields always required | Simple and predictable parsing | User must re-enter all fields even if only one changes |
-| Optional fields (`d/`, `q/`, `p/` each optional) | More flexible for the user | More complex parsing and validation logic |
+| Current: separate command per field | User only updates one field at a time, more flexible | Requires multiple commands to update all fields |
+| Previous: all 3 fields required | Single command updates everything | User must re-enter all unchanged fields |
 
-The current design requires all three fields to be provided. If partial edits are desired in a future version, consider regex-based parsing or `Optional<>` wrappers for each field.
+The current design improves usability by allowing targeted updates without re-entering unchanged values.
 
 ---
 
