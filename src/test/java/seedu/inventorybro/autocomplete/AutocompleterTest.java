@@ -33,8 +33,10 @@ class AutocompleterTest {
     @Test
     void getMatches_partialMultipleMatches_returnsAllMatches() {
         List<String> matches = autocompleter.getMatches("e");
-        assertEquals(2, matches.size());
-        assertTrue(matches.contains("editItem"));
+        assertEquals(4, matches.size());
+        assertTrue(matches.contains("editName"));
+        assertTrue(matches.contains("editQuantity"));
+        assertTrue(matches.contains("editPrice"));
         assertTrue(matches.contains("exit"));
     }
 
@@ -47,7 +49,7 @@ class AutocompleterTest {
     @Test
     void getMatches_emptyString_returnsAllKeywords() {
         List<String> matches = autocompleter.getMatches("");
-        assertEquals(10, matches.size());
+        assertEquals(12, matches.size());
     }
 
     @Test
