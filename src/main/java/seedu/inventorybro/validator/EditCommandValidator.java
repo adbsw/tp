@@ -5,12 +5,14 @@ import seedu.inventorybro.ItemList;
 /**
  * Validates the raw input string for the editItem command.
  */
+//@@author vionyp
 public class EditCommandValidator implements Validator {
-    private static final String FORMAT_ERROR = "Invalid edit format. "
-            + "Use: edit INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE";
+    private static final String FORMAT_ERROR = "Invalid editItem format. "
+           + "Use: editItem INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE";
     private final String input;
 
     public EditCommandValidator(String input) {
+        assert input != null : "Input should not be null";
         this.input = input;
     }
 
@@ -63,3 +65,4 @@ public class EditCommandValidator implements Validator {
         }
     }
 }
+//@@author

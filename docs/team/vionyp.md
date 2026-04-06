@@ -15,17 +15,20 @@ InventoryBRO is a desktop application for small shop owners to manage their inve
 
 ### Enhancements Implemented
 
-#### 1. Edit Item Feature (`editItem`)
-- **What it does:** Allows the user to update an existing item's name, quantity, and price in a single command using the format `editItem INDEX d/NAME q/QUANTITY p/PRICE`.
-- **Justification:** Store owners frequently need to correct item details or update prices. This command makes it efficient to update all fields at once.
+#### 1. Edit Item Feature (`editName` | `editQuantity` | `editPrice`)
+- **What it does:** Allows the user to update a specific field of an existing item using three separate commands:
+  - `editName INDEX d/NEW_NAME` — updates only the item name
+  - `editQuantity INDEX q/NEW_QUANTITY` — updates only the quantity
+  - `editPrice INDEX p/NEW_PRICE` — updates only the price
+- **Justification:** Store owners often need to update just one field at a time. Splitting into separate commands avoids forcing users to re-enter unchanged fields.
 - **Highlights:**
-  - Implemented `EditCommand.java` which delegates all validation to `EditCommandValidator` before parsing, keeping the command class focused purely on execution.
-  - Integrated price updating (`p/PRICE`) as part of the edit flow, which required adding `setPrice()` and `getPrice()` methods to the `Item` class.
-  - The command updates the item in-place using `setDescription()`, `setQuantity()`, and `setPrice()`, ensuring no unnecessary object creation.
-- **Difficulty:** Medium — required careful integration with the existing `Item` class and ensuring the validator correctly rejects invalid inputs (negative price, out-of-bounds index, non-numeric values).
+  - All three sub-commands are handled within a single `EditCommand.java` file, which routes to the correct private method based on the command keyword.
+  - Each sub-method validates its own input independently before updating the item in-place.
+  - Added `//@@author vionyp` tags for accurate RepoSense attribution.
+- **Difficulty:** Medium — required careful routing logic and independent validation for each sub-command.
 
 #### 2. Price Field in `Item` class
-- **What it does:** Added a `price` field (stored as `double`) to the `Item` class, with `setPrice()` and `getPrice()` methods, and updated `toString()` to display the price in `$X.XX` format.
+- **What it does:** Added a `price` field (stored as `double`) to the `Item` class, with `setPrice()` and `getPrice()` methods, and updated `toString()` to display price in `$X.XX` format.
 - **Justification:** Without price tracking, the inventory system would be incomplete for real-world shop use cases.
 
 ---

@@ -9,9 +9,7 @@ package seedu.inventorybro;
 public enum CommandWord {
     ADD_ITEM("addItem"),
     DELETE_ITEM("deleteItem"),
-    EDIT_NAME("editName"),
-    EDIT_QUANTITY("editQuantity"),
-    EDIT_PRICE("editPrice"),
+    EDIT_ITEM("editItem"),
     TRANSACT("transact"),
     SHOW_HISTORY("showHistory"),
     LIST_ITEMS("listItems"),

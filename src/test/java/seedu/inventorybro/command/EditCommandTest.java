@@ -1,6 +1,7 @@
 package seedu.inventorybro.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,41 +17,17 @@ class EditCommandTest {
     private final Ui ui = new Ui();
 
     /**
-     * Verifies that editName updates the item name correctly.
+     * Verifies that edit updates name, quantity, and price correctly.
      */
     @Test
-    void execute_editName_updatesNameCorrectly() {
+    void execute_validEdit_updatesAllFields() {
         ItemList items = new ItemList();
         items.addItem(new Item("Apple", 10));
 
-        new EditCommand("editName 1 d/Orange").execute(items, ui);
+        new EditCommand("editItem 1 d/Orange q/20 p/1.50").execute(items, ui);
 
         assertEquals("Orange", items.getItem(0).getDescription());
-    }
-
-    /**
-     * Verifies that editQuantity updates the item quantity correctly.
-     */
-    @Test
-    void execute_editQuantity_updatesQuantityCorrectly() {
-        ItemList items = new ItemList();
-        items.addItem(new Item("Apple", 10));
-
-        new EditCommand("editQuantity 1 q/20").execute(items, ui);
-
         assertEquals(20, items.getItem(0).getQuantity());
-    }
-
-    /**
-     * Verifies that editPrice updates the item price correctly.
-     */
-    @Test
-    void execute_editPrice_updatesPriceCorrectly() {
-        ItemList items = new ItemList();
-        items.addItem(new Item("Apple", 10));
-
-        new EditCommand("editPrice 1 p/1.50").execute(items, ui);
-
         assertEquals(1.50, items.getItem(0).getPrice());
     }
 
@@ -63,14 +40,14 @@ class EditCommandTest {
         items.addItem(new Item("Apple", 10));
         items.addItem(new Item("Banana", 5));
 
-        new EditCommand("editName 1 d/Orange").execute(items, ui);
+        new EditCommand("editItem 1 d/Orange q/20 p/1.50").execute(items, ui);
 
         assertEquals("Banana", items.getItem(1).getDescription());
         assertEquals(5, items.getItem(1).getQuantity());
     }
 
     /**
-     * Verifies that editName works correctly for a later item in the list.
+     * Verifies that editing the second item works correctly.
      */
     @Test
     void execute_secondItem_updatesCorrectly() {
@@ -78,9 +55,35 @@ class EditCommandTest {
         items.addItem(new Item("Apple", 10));
         items.addItem(new Item("Banana", 5));
 
-        new EditCommand("editName 2 d/Mango").execute(items, ui);
+        new EditCommand("editItem 2 d/Mango q/15 p/2.00").execute(items, ui);
 
         assertEquals("Mango", items.getItem(1).getDescription());
+        assertEquals(15, items.getItem(1).getQuantity());
+        assertEquals(2.00, items.getItem(1).getPrice());
+    }
+
+    /**
+     * Verifies that an invalid index throws an exception.
+     */
+    @Test
+    void execute_invalidIndex_throwsException() {
+        ItemList items = new ItemList();
+        items.addItem(new Item("Apple", 10));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new EditCommand("editItem 99 d/Ghost q/0 p/0.00").execute(items, ui));
+    }
+
+    /**
+     * Verifies that a negative quantity throws an exception.
+     */
+    @Test
+    void execute_negativeQuantity_throwsException() {
+        ItemList items = new ItemList();
+        items.addItem(new Item("Apple", 10));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new EditCommand("editItem 1 d/Apple q/-1 p/1.00").execute(items, ui));
     }
 }
 //@@author

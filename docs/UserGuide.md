@@ -63,12 +63,10 @@ Deletes an item permanently from the inventory.
   Now you have 3 items in the list.
   ```
 
-### 3. Editing an Item: `editName` | `editQuantity` | `editPrice`
-Edits a specific field of an existing item. Each command updates only one field at a time.
+### 3. Editing an Item: `edit`
+Edits an existing item's name, quantity, and price in one command.
 
-* **Edit Name Format:** `editName INDEX d/NEW_NAME`
-* **Edit Quantity Format:** `editQuantity INDEX q/NEW_QUANTITY`  
-* **Edit Price Format:** `editPrice INDEX p/NEW_PRICE`
+* **Format:** `edit INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE`
 
 | Parameter | Description |
 | :--- | :--- |
@@ -77,19 +75,11 @@ Edits a specific field of an existing item. Each command updates only one field 
 | `q/NEW_QUANTITY` | The new quantity. Must be a non-negative integer. |
 | `p/NEW_PRICE` | The new price. Must be a non-negative decimal (e.g., `1.50`). |
 
-* **Examples:**
+* **Example:**
 ```text
-  > editName 1 d/Coke Can
-  Item name updated: Coke Can (Quantity: 50, Price: $1.50)
-
-  > editQuantity 1 q/100
-  Item quantity updated: Coke Can (Quantity: 100, Price: $1.50)
-
-  > editPrice 1 p/2.50
-  Item price updated: Coke Can (Quantity: 100, Price: $2.50)
+> edit 1 d/Coke Can q/100 p/2.50
+Item updated: Coke Can (Quantity: 100, Price: $2.50)
 ```
-
-> **Note:** Each command updates only one field. Use multiple commands if you want to update more than one field.
 
 ### 4. Viewing All Items: `listItems`
 Displays a numbered list of all items currently in your inventory.
@@ -296,9 +286,7 @@ If you accidentally misspell a command, InventoryBRO will attempt to detect the 
 | :--- | :--- | :--- |
 | **Add item** | `addItem d/NAME q/QUANTITY` | `addItem d/Coke q/50` |
 | **Delete item** | `deleteItem INDEX` | `deleteItem 2` |
-| **Edit name** | `editName INDEX d/NAME` | `editName 1 d/Coke Can` |
-| **Edit quantity** | `editQuantity INDEX q/QUANTITY` | `editQuantity 1 q/100` |
-| **Edit price** | `editPrice INDEX p/PRICE` | `editPrice 1 p/2.50` |
+| **Edit item** | `editItem INDEX d/NAME q/QUANTITY p/PRICE` | `editItem 1 d/Coke Can q/100 p/2.50` |
 | **List items** | `listItems` | `listItems` |
 | **Find item** | `findItem KEYWORD` | `findItem apple` |
 | **Filter items** | `filterItem FIELD OP VALUE [AND\|OR ...]` | `filterItem quantity > 10` |
