@@ -1,5 +1,6 @@
 package seedu.inventorybro.command;
 
+import seedu.inventorybro.ExitException;
 import seedu.inventorybro.ItemList;
 import seedu.inventorybro.Ui;
 
@@ -25,7 +26,7 @@ public class ExitCommand implements Command {
     @Override
     public void execute(ItemList items, Ui ui) {
         ui.showMessage("Bye! See you next time.");
-        exiter.run();
+        throw new ExitException();
     }
 }
 //@@author

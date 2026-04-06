@@ -2,6 +2,8 @@ package seedu.inventorybro.command;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import seedu.inventorybro.ExitException;
 import seedu.inventorybro.ItemList;
 import seedu.inventorybro.Ui;
 
@@ -10,18 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ExitCommandTest {
     private final Ui ui = new Ui();
 
-    @AfterEach
-    void tearDown() {
-        ExitCommand.resetExiter(); // cleanup after each test
-    }
-
+    /**
+     * Verifies that executing the exit command throws {@link ExitException}
+     * instead of terminating the JVM, keeping the test runner alive.
+     */
     @Test
-    void execute_callsSystemExit() {
-        boolean[] exitCalled = {false};
-        ExitCommand.setExiter(() -> exitCalled[0] = true);
-
-        new ExitCommand().execute(new ItemList(), ui);
-
-        assertTrue(exitCalled[0]);
+    void execute_throwsExitException() {
+        assertThrows(ExitException.class, () -> new ExitCommand().execute(new ItemList(), ui));
     }
 }
