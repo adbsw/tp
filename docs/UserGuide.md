@@ -63,10 +63,10 @@ Deletes an item permanently from the inventory.
   Now you have 3 items in the list.
   ```
 
-### 3. Editing an Item: `edit`
+### 3. Editing an Item: `editItem`
 Edits an existing item's name, quantity, and price in one command.
 
-* **Format:** `edit INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE`
+* **Format:** `editItem INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE`
 
 | Parameter | Description |
 | :--- | :--- |
@@ -77,7 +77,7 @@ Edits an existing item's name, quantity, and price in one command.
 
 * **Example:**
 ```text
-> edit 1 d/Coke Can q/100 p/2.50
+> editItem 1 d/Coke Can q/100 p/2.50
 Item updated: Coke Can (Quantity: 100, Price: $2.50)
 ```
 

@@ -21,7 +21,7 @@ class EditCommandValidatorTest {
         ItemList items = new ItemList();
         items.addItem(new Item("Apple", 10));
 
-        assertDoesNotThrow(() -> new EditCommandValidator("edit 1 d/Orange q/20 p/1.50").validate(items));
+        assertDoesNotThrow(() -> new EditCommandValidator("editItem 1 d/Orange q/20 p/1.50").validate(items));
     }
 
     /**
@@ -34,7 +34,7 @@ class EditCommandValidatorTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommandValidator("edit 99 d/Ghost q/0").validate(items)
+                () -> new EditCommandValidator("editItem 99 d/Ghost q/0").validate(items)
         );
     }
 
@@ -48,7 +48,7 @@ class EditCommandValidatorTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommandValidator("edit 0 d/Apple q/5").validate(items)
+                () -> new EditCommandValidator("editItem 0 d/Apple q/5").validate(items)
         );
     }
 
@@ -62,7 +62,7 @@ class EditCommandValidatorTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommandValidator("edit abc d/Apple q/5").validate(items)
+                () -> new EditCommandValidator("editItem abc d/Apple q/5").validate(items)
         );
     }
 
@@ -76,7 +76,7 @@ class EditCommandValidatorTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new EditCommandValidator("edit 1 d/Apple q/abc").validate(items)
+                () -> new EditCommandValidator("editItem 1 d/Apple q/abc").validate(items)
         );
     }
 }

@@ -15,11 +15,9 @@ InventoryBRO is a desktop application for small shop owners to manage their inve
 
 ### Enhancements Implemented
 
-#### 1. Edit Item Feature (`editName` | `editQuantity` | `editPrice`)
-- **What it does:** Allows the user to update a specific field of an existing item using three separate commands:
-  - `editName INDEX d/NEW_NAME` — updates only the item name
-  - `editQuantity INDEX q/NEW_QUANTITY` — updates only the quantity
-  - `editPrice INDEX p/NEW_PRICE` — updates only the price
+#### 1. Edit Item Feature (`editItem`)
+- **What it does:** Allows the user to update an existing item's name, quantity, and price in one command:
+  - `editItem INDEX d/NEW_NAME q/NEW_QUANTITY p/NEW_PRICE` — updates name, quantity, and price
 - **Justification:** Store owners often need to update just one field at a time. Splitting into separate commands avoids forcing users to re-enter unchanged fields.
 - **Highlights:**
   - All three sub-commands are handled within a single `EditCommand.java` file, which routes to the correct private method based on the command keyword.
