@@ -2,7 +2,6 @@ package seedu.inventorybro;
 
 import java.util.Optional;
 
-import seedu.inventorybro.command.*;
 import seedu.inventorybro.command.EditPriceCommand;
 import seedu.inventorybro.command.EditQuantityCommand;
 import seedu.inventorybro.command.EditDescriptionCommand;
