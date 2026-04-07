@@ -37,7 +37,14 @@ InventoryBRO is a desktop application for small shop owners to manage their inve
   - Implemented `EditQuantityCommand.java` and `EditQuantityCommandValidator.java`.
   - Validator rejects negative quantities and non-integer inputs with clear error messages.
 
-#### 4. Price Field in `Item` class
+#### 4. Exit Feature (`exit`)
+- **What it does:** Safely closes the application: `exit`
+- **Justification:** A clean exit command ensures the application terminates gracefully after all data has been saved, rather than relying on force-closing the terminal.
+- **Highlights:**
+  - Implemented `ExitCommand.java`, which displays a farewell message via `Ui` then throws `ExitException` to signal the main loop to terminate.
+  - Added `//@@author vionyp` tags for accurate RepoSense attribution.
+
+#### 5. Price Field in `Item` class
 - **What it does:** Added a `price` field (stored as `double`) to the `Item` class, with `setPrice()` and `getPrice()` methods, and updated `toString()` to display price in `$X.XX` format.
 - **Justification:** Without price tracking, the inventory system would be incomplete for real-world shop use cases.
 
@@ -72,14 +79,3 @@ InventoryBRO is a desktop application for small shop owners to manage their inve
 - Added `//@@author vionyp` tags to all code authored to ensure accurate RepoSense attribution.
 
 ---
-
-### Review/Mentoring Contributions
-
-- Reviewed teammates' PRs on GitHub and provided comments on code correctness and formatting.
-
----
-
-### Contributions Beyond the Project Team
-
-- Smoke-tested CATcher for the practical exam preparation.
-- Reported bugs found in peer teams' products during PE dry run activities.
