@@ -213,5 +213,5 @@ class ArrayStorageTest {
         assertThrows(AssertionError.class,
                 () -> {item.setPrice(-1.0);});
     }
-
+    
 }
