@@ -17,7 +17,7 @@ import seedu.inventorybro.validator.HelpCommandValidator;
 public class HelpCommand implements Command {
     private static final String HELPSUMMARYMESSAGE = """
             Command names and their summaries:
-            addItem:    Adds a new item of a given quantity to the current inventory list.
+            addItem:    Adds a new item of a given name, quantity, and price to the inventory list.
             deleteItem: Deletes an item from the current inventory list.
             editItem:   Edits the name and/or quantity of an existing item in the inventory
                         based on item index. At least name or quantity must be provided,
@@ -26,6 +26,8 @@ public class HelpCommand implements Command {
 
                         or displays message to the user that the inventory does not have item
                         that matches keyword.
+            filterItem: Displays only the items that match one or more field-based conditions.
+                        Conditions can be combined using AND or OR operators.
             transact:   Updates stock quantities after a sale or restock.
             listItems:  Displays all items currently in the inventory, or displays message
                         to the user that the inventory is empty if there are no items.
@@ -37,10 +39,15 @@ public class HelpCommand implements Command {
             """;
     private static final String HELPADDITEMMESSAGE = """
             addItem:
-            Adds a new item of a given name and quantity to the current inventory list.
+            Adds a new item with a given name, quantity, and price to the current inventory list.
+            - Name (d/): cannot be empty.
+            - Quantity (q/): must be 0 or greater (negative values are not allowed).
+            - Price (p/): must be at least 0.01 when rounded to 2 decimal places (e.g. 0.001 is rejected).
 
-            Example usage: addItem d/Apples q/10
-            This adds an item named 'Apples' of quantity '10' to the inventory list.
+            Format: addItem d/NAME q/INITIAL_QUANTITY p/PRICE
+
+            Example usage: addItem d/Apples q/10 p/1.50
+            This adds an item named 'Apples' with quantity '10' and price '$1.50' to the inventory list.
             """;
     private static final String HELPDELETEITEMMESSAGE = """
             deleteItem:
@@ -76,6 +83,39 @@ public class HelpCommand implements Command {
 
             Example usage: findItem app
             This displays all items containing 'app' in their name, such as 'Apples' or 'Pineapple'.
+            """;
+    private static final String HELPFILTERITEMMESSAGE = """
+            filterItem:
+            Displays only the items that match one or more field-based conditions.
+            Conditions can be combined using AND (both must match) or OR (either must match).
+            AND binds tighter than OR.
+
+            Supported fields: description, quantity, price
+            Supported operators: = < >
+
+            - description values must be wrapped in single quotes (e.g. 'Coke Can').
+            - quantity values must be whole numbers (decimals are not accepted).
+            - price values accept up to 2 decimal places (e.g. 5 or 1.99). Values with more
+              than 2 decimal places (e.g. 1.999) are rejected. Comparison is done on the price
+              rounded to 2 decimal places.
+
+            Format: filterItem FIELD OPERATOR VALUE [AND|OR FIELD OPERATOR VALUE ...]
+
+            Example usages:-
+            (Single condition): filterItem quantity > 10
+            This displays all items with a quantity greater than 10.
+
+            (AND condition): filterItem quantity > 10 AND quantity < 40
+            This displays items with quantity between 11 and 39 (inclusive).
+
+            (OR condition): filterItem description = 'Coke Can' OR description = 'Sprite Bottle'
+            This displays items whose description matches either 'Coke Can' or 'Sprite Bottle'.
+
+            (Price filter — integer): filterItem price < 5
+            This displays all items with a price less than 5.
+
+            (Price filter — decimal): filterItem price > 1.50
+            This displays all items with a price greater than $1.50.
             """;
     private static final String HELPTRANSACTMESSAGE = """
             transact:
@@ -134,6 +174,7 @@ public class HelpCommand implements Command {
             entry("deleteItem", HELPDELETEITEMMESSAGE),
             entry("editItem", HELPEDITITEMMESSAGE),
             entry("findItem", HELPFINDITEMMESSAGE),
+            entry("filterItem", HELPFILTERITEMMESSAGE),
             entry("transact", HELPTRANSACTMESSAGE),
             entry("listItems", HELPLISTITEMSMESSAGE),
             entry("help", HELPHELPMESSAGE),

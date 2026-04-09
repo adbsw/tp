@@ -77,41 +77,23 @@ The `Parser` is responsible for routing user input to the correct command.
 ## Implementation
 ### Adding an Item
 
-The add mechanism is handled by the `AddCommand` class. It validates the input, creates a new `Item`, and appends it to the inventory.
+The add mechanism is handled by the `AddCommand` class. It validates the input, creates a new `Item` with a name, quantity, and price, and appends it to the inventory.
 
 **Figure 13: Add Command Class Diagram**
 ![Add Command Class Diagram](diagrams/AddCommandClassDiagram.png)
 
 **Step-by-step Execution:**
-1. The user inputs `addItem d/Apple q/50`.
-2. `Parser` matches the `addItem` prefix and instantiates a new `AddCommand` with the raw input string.
+1. The user inputs `addItem d/Apple q/10 p/1.50`.
+2. `Parser` matches the `additem` prefix (case-insensitive switch) and instantiates a new `AddCommand` with the raw input string.
 3. `Parser` calls `execute(items, ui)` on the `AddCommand`.
 4. `AddCommand.execute()` immediately creates a new `AddCommandValidator` and calls `validate(items)`.
-5. `AddCommandValidator` applies the regex `^addItem d/(.*?) q/(\d+)$` to the input. If it does not match, it throws `IllegalArgumentException` with `"Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY"`. If the format is valid, it trims the captured name and delegates to `DuplicateItemValidator`, which iterates the `ItemList` performing a case-insensitive name comparison; a match throws `IllegalArgumentException` with `"An item named '<NAME>' already exists in the inventory."`.
-6. If validation passes, `AddCommand` re-applies the same regex to extract the trimmed name and parses the quantity as an integer.
-7. A new `Item` is constructed and appended to the `ItemList` via `items.addItem(newItem)`.
-8. `ui.showMessage("Added: " + newItem)` confirms the addition to the user.
-
-**Figure 14: Add Command Sequence Diagram**
-![Add Command Sequence Diagram](diagrams/AddCommandSequenceDiagram.png)
-
----
-
-### Adding an Item
-
-The add mechanism is handled by the `AddCommand` class. It validates the input, creates a new `Item`, and appends it to the inventory.
-
-**Figure 13: Add Command Class Diagram**
-![Add Command Class Diagram](diagrams/AddCommandClassDiagram.png)
-
-**Step-by-step Execution:**
-1. The user inputs `addItem d/Apple q/50`.
-2. `Parser` matches the `addItem` prefix and instantiates a new `AddCommand` with the raw input string.
-3. `Parser` calls `execute(items, ui)` on the `AddCommand`.
-4. `AddCommand.execute()` immediately creates a new `AddCommandValidator` and calls `validate(items)`.
-5. `AddCommandValidator` applies the regex `^addItem d/(.*?) q/(\d+)$` to the input. If it does not match, it throws `IllegalArgumentException` with `"Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY"`. If the format is valid, it trims the captured name and delegates to `DuplicateItemValidator`, which iterates the `ItemList` performing a case-insensitive name comparison; a match throws `IllegalArgumentException` with `"An item named '<NAME>' already exists in the inventory."`.
-6. If validation passes, `AddCommand` re-applies the same regex to extract the trimmed name and parses the quantity as an integer.
-7. A new `Item` is constructed and appended to the `ItemList` via `items.addItem(newItem)`.
+5. `AddCommandValidator` applies the regex `^addItem d/(.*?) q/(-?\d+) p/(-?\d+(\.\d+)?)$` to the input. If it does not match, it throws `IllegalArgumentException` with `"Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY p/PRICE"`. If the pattern matches, the following checks are applied in order:
+   - If the parsed quantity is negative, throws `IllegalArgumentException` with `"Quantity cannot be negative."`.
+   - If `Math.round(price * 100) <= 0` (i.e. the price rounds to `$0.00`), throws `IllegalArgumentException` with `"Price must be at least 0.01 when rounded"`.
+   - If the trimmed name is empty, throws `IllegalArgumentException` with `"Item name cannot be empty."`.
+   - Delegates to `DuplicateItemValidator`, which iterates the `ItemList` performing a case-insensitive name comparison; a match throws `IllegalArgumentException` with `"An item named '<NAME>' already exists in the inventory."`.
+6. If validation passes, `AddCommand` re-applies the same regex to extract the trimmed name, quantity (parsed as `int`), and price (parsed as `double`).
+7. A new `Item` is constructed via `new Item(name, quantity, price)` and appended to the `ItemList` via `items.addItem(newItem)`.
 8. `ui.showMessage("Added: " + newItem)` confirms the addition to the user.
 
 **Figure 14: Add Command Sequence Diagram**
@@ -238,10 +220,10 @@ The filter mechanism is handled by the `FilterCommand` class. It evaluates one o
 2. The `Parser` calls `execute(items, ui)` on the `FilterCommand`.
 3. Inside `execute()`, `FilterCommand` immediately creates a `FilterCommandValidator` and calls `validate(items)`.
 4. `FilterCommandValidator` first checks that the input starts with `"filterItem "`. It then applies the predicate regex `(description|quantity|price) (=|<|>) ('.*?'|[^\s']+)` to extract all predicate matches and their positions.
-5. The validator checks every gap between consecutive matches: the first gap must be empty, each subsequent gap must be exactly `AND` or `OR`, and no trailing text may follow the last predicate. A bad gap throws `IllegalArgumentException` (e.g. `"Expected AND or OR between predicates, found: '...'"` ). It then validates each predicate's value type: `description` values must be single-quoted; `quantity` and `price` values must match `^\d+$`. A type mismatch throws `IllegalArgumentException`.
+5. The validator checks every gap between consecutive matches: the first gap must be empty, each subsequent gap must be exactly `AND` or `OR`, and no trailing text may follow the last predicate. A bad gap throws `IllegalArgumentException` (e.g. `"Expected AND or OR between predicates, found: '...'"` ). It then validates each predicate's value type: `description` values must be single-quoted; `quantity` values must match `^\d+$` (non-negative integer); `price` values must match `^\d+(\.\d{1,2})?$` (non-negative number with at most 2 decimal places). A type mismatch throws `IllegalArgumentException`.
 6. Back in `execute()`, the same regex builds a flat list of `[field, operator, value]` arrays and a corresponding list of joining operators.
 7. `buildAndGroups()` splits the flat list into AND-groups: consecutive predicates joined by `AND` stay in the same group; an `OR` starts a new group. This implements AND-before-OR precedence without explicit precedence parsing.
-8. `collectMatchingItems()` iterates every `Item` in the `ItemList`. For each item, `passesFilter()` checks whether it satisfies every predicate in at least one AND-group. Within a group, `evaluatePredicate()` resolves each field: `description` uses `String.compareTo`; `quantity` and `price` use `Integer.compare`. The comparator result is tested against `=`, `<`, or `>` by `satisfiesOperator()`.
+8. `collectMatchingItems()` iterates every `Item` in the `ItemList`. For each item, `passesFilter()` checks whether it satisfies every predicate in at least one AND-group. Within a group, `evaluatePredicate()` resolves each field: `description` uses `String.compareTo`; `quantity` uses `Integer.compare`; `price` rounds both the item's stored price and the filter value to 2 decimal places via `Math.round(x * 100) / 100.0` and then uses `Double.compare`. The comparator result is tested against `=`, `<`, or `>` by `satisfiesOperator()`.
 9. If no items match, `Ui` displays `"No items match the given filter."`. Otherwise it displays `"Here are the filtered items:"` followed by a numbered list of matching items in their original inventory order.
 
 **Figure 20: Filter Command Sequence Diagram**
