@@ -9,6 +9,9 @@
 3. [Implementation](#implementation)
     * [Adding an Item](#adding-an-item)
     * [Deleting an Item](#deleting-an-item)
+    * [Editing an Item's Description](#editing-an-items-description)
+    * [Editing an Item's Price](#editing-an-items-price)
+    * [Editing an Item's Quantity](#editing-an-items-quantity)
     * [Finding an Item](#finding-an-item)
     * [Filtering Items](#filtering-items)
     * [Transacting an Item](#transacting-an-item)
@@ -74,41 +77,23 @@ The `Parser` is responsible for routing user input to the correct command.
 ## Implementation
 ### Adding an Item
 
-The add mechanism is handled by the `AddCommand` class. It validates the input, creates a new `Item`, and appends it to the inventory.
+The add mechanism is handled by the `AddCommand` class. It validates the input, creates a new `Item` with a name, quantity, and price, and appends it to the inventory.
 
 **Figure 13: Add Command Class Diagram**
 ![Add Command Class Diagram](diagrams/AddCommandClassDiagram.png)
 
 **Step-by-step Execution:**
-1. The user inputs `addItem d/Apple q/50`.
-2. `Parser` matches the `addItem` prefix and instantiates a new `AddCommand` with the raw input string.
+1. The user inputs `addItem d/Apple q/10 p/1.50`.
+2. `Parser` matches the `additem` prefix (case-insensitive switch) and instantiates a new `AddCommand` with the raw input string.
 3. `Parser` calls `execute(items, ui)` on the `AddCommand`.
 4. `AddCommand.execute()` immediately creates a new `AddCommandValidator` and calls `validate(items)`.
-5. `AddCommandValidator` applies the regex `^addItem d/(.*?) q/(\d+)$` to the input. If it does not match, it throws `IllegalArgumentException` with `"Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY"`. If the format is valid, it trims the captured name and delegates to `DuplicateItemValidator`, which iterates the `ItemList` performing a case-insensitive name comparison; a match throws `IllegalArgumentException` with `"An item named '<NAME>' already exists in the inventory."`.
-6. If validation passes, `AddCommand` re-applies the same regex to extract the trimmed name and parses the quantity as an integer.
-7. A new `Item` is constructed and appended to the `ItemList` via `items.addItem(newItem)`.
-8. `ui.showMessage("Added: " + newItem)` confirms the addition to the user.
-
-**Figure 14: Add Command Sequence Diagram**
-![Add Command Sequence Diagram](diagrams/AddCommandSequenceDiagram.png)
-
----
-
-### Adding an Item
-
-The add mechanism is handled by the `AddCommand` class. It validates the input, creates a new `Item`, and appends it to the inventory.
-
-**Figure 13: Add Command Class Diagram**
-![Add Command Class Diagram](diagrams/AddCommandClassDiagram.png)
-
-**Step-by-step Execution:**
-1. The user inputs `addItem d/Apple q/50`.
-2. `Parser` matches the `addItem` prefix and instantiates a new `AddCommand` with the raw input string.
-3. `Parser` calls `execute(items, ui)` on the `AddCommand`.
-4. `AddCommand.execute()` immediately creates a new `AddCommandValidator` and calls `validate(items)`.
-5. `AddCommandValidator` applies the regex `^addItem d/(.*?) q/(\d+)$` to the input. If it does not match, it throws `IllegalArgumentException` with `"Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY"`. If the format is valid, it trims the captured name and delegates to `DuplicateItemValidator`, which iterates the `ItemList` performing a case-insensitive name comparison; a match throws `IllegalArgumentException` with `"An item named '<NAME>' already exists in the inventory."`.
-6. If validation passes, `AddCommand` re-applies the same regex to extract the trimmed name and parses the quantity as an integer.
-7. A new `Item` is constructed and appended to the `ItemList` via `items.addItem(newItem)`.
+5. `AddCommandValidator` applies the regex `^addItem d/(.*?) q/(-?\d+) p/(-?\d+(\.\d+)?)$` to the input. If it does not match, it throws `IllegalArgumentException` with `"Invalid addItem format! Use: addItem d/NAME q/INITIAL_QUANTITY p/PRICE"`. If the pattern matches, the following checks are applied in order:
+   - If the parsed quantity is negative, throws `IllegalArgumentException` with `"Quantity cannot be negative."`.
+   - If `Math.round(price * 100) <= 0` (i.e. the price rounds to `$0.00`), throws `IllegalArgumentException` with `"Price must be at least 0.01 when rounded"`.
+   - If the trimmed name is empty, throws `IllegalArgumentException` with `"Item name cannot be empty."`.
+   - Delegates to `DuplicateItemValidator`, which iterates the `ItemList` performing a case-insensitive name comparison; a match throws `IllegalArgumentException` with `"An item named '<NAME>' already exists in the inventory."`.
+6. If validation passes, `AddCommand` re-applies the same regex to extract the trimmed name, quantity (parsed as `int`), and price (parsed as `double`).
+7. A new `Item` is constructed via `new Item(name, quantity, price)` and appended to the `ItemList` via `items.addItem(newItem)`.
 8. `ui.showMessage("Added: " + newItem)` confirms the addition to the user.
 
 **Figure 14: Add Command Sequence Diagram**
@@ -129,10 +114,82 @@ The add mechanism is handled by the `AddCommand` class. It validates the input, 
 5. If validation passes, `DeleteCommand` calculates the zero-based index and calls `deleteItem()` on the `ItemList`.
 6. Finally, a success message containing the removed item's details is passed to the `Ui` to be displayed to the user.
 
-
 **Figure 16: Delete Command Sequence Diagram**
 ![Delete Sequence Diagram](diagrams/DeleteSequenceDiagram.png)
 
+---
+
+### Editing an Item's Description
+
+The edit-description mechanism is handled by the `EditDescriptionCommand` class. It updates the description field of an existing item in the inventory.
+
+**Figure 30: Edit Description Command Class Diagram**
+![Edit Description Command Class Diagram](diagrams/EditDescriptionCommandClassDiagram.png)
+
+**Step-by-step Execution:**
+1. The user inputs `editDescription 1 d/New Name`.
+2. `Parser` matches the `editDescription` prefix and instantiates a new `EditDescriptionCommand` with the raw input string.
+3. `Parser` calls `execute(items, ui)` on the `EditDescriptionCommand`.
+4. `EditDescriptionCommand.execute()` immediately creates a new `EditDescriptionCommandValidator` and calls `validate(items)`.
+5. `EditDescriptionCommandValidator.validate()` performs these checks in order:
+   - Splits the input on the first space; if only one token is present (no arguments after the command word), it throws `IllegalArgumentException` with `"Invalid editDescription format. Use: editDescription INDEX d/NEW_DESCRIPTION"`.
+   - Splits the argument portion on `d/`; if the `d/` delimiter is absent, it throws `IllegalArgumentException` with the same format error message.
+   - Parses the text before `d/` as an integer index (1-based); if it is not a number, it throws `IllegalArgumentException` with `"Index must be a number."`. If the resulting zero-based index is out of bounds (`< 0` or `>= items.size()`), it throws `IllegalArgumentException` with `"Invalid index."`.
+   - Trims the text after `d/`; if it is empty, it throws `IllegalArgumentException` with `"Item description cannot be empty."`.
+6. If validation passes, `EditDescriptionCommand` performs the same parse: splits on the first space, then on `d/`, converts the index to zero-based, and trims the new description string. It calls `items.getItem(index)` to retrieve the target `Item`, then calls `item.setDescription(newDescription)` to update it in-place. Finally, it calls `ui.showMessage("Item description updated: " + item)` to confirm the change to the user.
+
+**Figure 31: Edit Description Command Sequence Diagram**
+![Edit Description Command Sequence Diagram](diagrams/EditDescriptionCommandSequenceDiagram.png)
+
+---
+
+### Editing an Item's Price
+
+The edit-price mechanism is handled by the `EditPriceCommand` class. It updates the price field of an existing item in the inventory.
+
+**Figure 32: Edit Price Command Class Diagram**
+![Edit Price Command Class Diagram](diagrams/EditPriceCommandClassDiagram.png)
+
+**Step-by-step Execution:**
+1. The user inputs `editPrice INDEX p/NEW_PRICE`.
+2. `Parser` matches the `editPrice` prefix (via the `"editprice"` case in its switch statement) and instantiates a new `EditPriceCommand` with the raw input string.
+3. `Parser` calls `execute(items, ui)` on the `EditPriceCommand`.
+4. `EditPriceCommand.execute()` immediately creates a new `EditPriceCommandValidator` and calls `validate(items)`.
+5. `EditPriceCommandValidator.validate()` performs these checks in order:
+   - Splits the input on the first space; if only one token is present (no arguments after the command word), it throws `IllegalArgumentException` with `"Invalid editPrice format. Use: editPrice INDEX p/NEW_PRICE"`.
+   - Splits the argument portion on `p/`; if the `p/` delimiter is absent, it throws `IllegalArgumentException` with the same format error message.
+   - Parses the text before `p/` as an integer index (1-based); if it is not a number, or if the price text is not a valid decimal, it throws `IllegalArgumentException` with `"Index must be a number and price must be a valid decimal."`. If the resulting zero-based index is out of bounds (`< 0` or `>= items.size()`), it throws `IllegalArgumentException` with `"Invalid index."`.
+   - Parses the text after `p/` as a `double`; if the value is negative, it throws `IllegalArgumentException` with `"Price cannot be negative."`.
+6. If validation passes, `EditPriceCommand` performs the same parse: splits on the first space, then on `p/`, converts the index to zero-based, and parses the new price as a `double`. It calls `items.getItem(index)` to retrieve the target `Item`, then calls `item.setPrice(newPrice)` to update it in-place. Finally, it calls `ui.showMessage("Item price updated: " + item)` to confirm the change to the user.
+
+**Figure 33: Edit Price Command Sequence Diagram**
+![Edit Price Command Sequence Diagram](diagrams/EditPriceCommandSequenceDiagram.png)
+
+---
+
+### Editing an Item's Quantity
+
+The edit-quantity mechanism is handled by the `EditQuantityCommand` class. It updates the quantity field of an existing item in the inventory.
+
+**Figure 34: Edit Quantity Command Class Diagram**
+![Edit Quantity Command Class Diagram](diagrams/EditQuantityCommandClassDiagram.png)
+
+**Step-by-step Execution:**
+1. The user inputs `editQuantity INDEX q/NEW_QUANTITY`.
+2. `Parser` matches the `editQuantity` prefix (via the `"editquantity"` case in its switch statement) and instantiates a new `EditQuantityCommand` with the raw input string.
+3. `Parser` calls `execute(items, ui)` on the `EditQuantityCommand`.
+4. `EditQuantityCommand.execute()` immediately creates a new `EditQuantityCommandValidator` and calls `validate(items)`.
+5. `EditQuantityCommandValidator.validate()` performs these checks in order:
+   - Splits the input on the first space; if only one token is present (no arguments after the command word), it throws `IllegalArgumentException` with `"Invalid editQuantity format. Use: editQuantity INDEX q/NEW_QUANTITY"`.
+   - Splits the argument portion on `q/`; if the `q/` delimiter is absent, it throws `IllegalArgumentException` with the same format error message.
+   - Parses the text before `q/` as an integer index (1-based); if it is not a number, or if the quantity text is not a valid integer, it throws `IllegalArgumentException` with `"Index and quantity must be numbers."`. If the resulting zero-based index is out of bounds (`< 0` or `>= items.size()`), it throws `IllegalArgumentException` with `"Invalid index."`.
+   - Parses the text after `q/` as an integer; if the value is negative, it throws `IllegalArgumentException` with `"Quantity cannot be negative."`.
+6. If validation passes, `EditQuantityCommand` performs the same parse: splits on the first space, then on `q/`, converts the index to zero-based, and parses the new quantity as an integer. It calls `items.getItem(index)` to retrieve the target `Item`, then calls `item.setQuantity(newQuantity)` to update it in-place. Finally, it calls `ui.showMessage("Item quantity updated: " + item)` to confirm the change to the user.
+
+**Figure 35: Edit Quantity Command Sequence Diagram**
+![Edit Quantity Command Sequence Diagram](diagrams/EditQuantityCommandSequenceDiagram.png)
+
+---
 
 ### Finding an Item
 
@@ -146,10 +203,10 @@ The add mechanism is handled by the `AddCommand` class. It validates the input, 
 4. The command iterates through the `ItemList`, retrieving each `Item` and checking if its description contains the target keyword.
 5. Matching items are immediately passed to the `Ui` to be displayed. If no items match by the end of the loop, a "not found" message is displayed instead.
 
-
 **Figure 18: Find Command Sequence Diagram**
 ![Find Sequence Diagram](diagrams/FindSequenceDiagram.png)
 
+---
 
 ### Filtering Items
 
@@ -163,10 +220,10 @@ The filter mechanism is handled by the `FilterCommand` class. It evaluates one o
 2. The `Parser` calls `execute(items, ui)` on the `FilterCommand`.
 3. Inside `execute()`, `FilterCommand` immediately creates a `FilterCommandValidator` and calls `validate(items)`.
 4. `FilterCommandValidator` first checks that the input starts with `"filterItem "`. It then applies the predicate regex `(description|quantity|price) (=|<|>) ('.*?'|[^\s']+)` to extract all predicate matches and their positions.
-5. The validator checks every gap between consecutive matches: the first gap must be empty, each subsequent gap must be exactly `AND` or `OR`, and no trailing text may follow the last predicate. A bad gap throws `IllegalArgumentException` (e.g. `"Expected AND or OR between predicates, found: '...'"` ). It then validates each predicate's value type: `description` values must be single-quoted; `quantity` and `price` values must match `^\d+$`. A type mismatch throws `IllegalArgumentException`.
+5. The validator checks every gap between consecutive matches: the first gap must be empty, each subsequent gap must be exactly `AND` or `OR`, and no trailing text may follow the last predicate. A bad gap throws `IllegalArgumentException` (e.g. `"Expected AND or OR between predicates, found: '...'"` ). It then validates each predicate's value type: `description` values must be single-quoted; `quantity` values must match `^\d+$` (non-negative integer); `price` values must match `^\d+(\.\d{1,2})?$` (non-negative number with at most 2 decimal places). A type mismatch throws `IllegalArgumentException`.
 6. Back in `execute()`, the same regex builds a flat list of `[field, operator, value]` arrays and a corresponding list of joining operators.
 7. `buildAndGroups()` splits the flat list into AND-groups: consecutive predicates joined by `AND` stay in the same group; an `OR` starts a new group. This implements AND-before-OR precedence without explicit precedence parsing.
-8. `collectMatchingItems()` iterates every `Item` in the `ItemList`. For each item, `passesFilter()` checks whether it satisfies every predicate in at least one AND-group. Within a group, `evaluatePredicate()` resolves each field: `description` uses `String.compareTo`; `quantity` and `price` use `Integer.compare`. The comparator result is tested against `=`, `<`, or `>` by `satisfiesOperator()`.
+8. `collectMatchingItems()` iterates every `Item` in the `ItemList`. For each item, `passesFilter()` checks whether it satisfies every predicate in at least one AND-group. Within a group, `evaluatePredicate()` resolves each field: `description` uses `String.compareTo`; `quantity` uses `Integer.compare`; `price` rounds both the item's stored price and the filter value to 2 decimal places via `Math.round(x * 100) / 100.0` and then uses `Double.compare`. The comparator result is tested against `=`, `<`, or `>` by `satisfiesOperator()`.
 9. If no items match, `Ui` displays `"No items match the given filter."`. Otherwise it displays `"Here are the filtered items:"` followed by a numbered list of matching items in their original inventory order.
 
 **Figure 20: Filter Command Sequence Diagram**
@@ -197,6 +254,7 @@ The transact mechanism is handled by the `TransactCommand` class. It updates an 
 **Figure 22: Transact Command Sequence Diagram**
 ![Transact Sequence Diagram](diagrams/TransactCommandSequenceDiagram.png)
 
+---
 
 ### Viewing Transaction History
 
@@ -274,7 +332,7 @@ The storage system is responsible for persisting both inventory data and transac
 * Separation of inventory and transaction files
 * Append-only strategy for transaction history
 
-
+---
 
 ### Command Autocompletion
 
@@ -333,7 +391,7 @@ When a user enters an unknown command, InventoryBRO attempts to detect whether i
 
 ### Target user profile
 
-InventoryBRO is designed for small shop owners (e.g., “BRO”) who need a simple and fast way to manage their inventory using a Command Line Interface (CLI).
+InventoryBRO is designed for small shop owners (e.g., "BRO") who need a simple and fast way to manage their inventory using a Command Line Interface (CLI).
 
 The target user:
 
@@ -342,9 +400,6 @@ Prefers typing commands over using graphical interfaces
 Requires quick and precise stock updates during daily operations
 Has basic familiarity with using a computer terminal
 May not have access to complex inventory management systems
-
-
-**Implementation:** `EditCommand` parses the input in the format `edit INDEX d/NEW_NAME q/NEW_QUANTITY`. It retrieves the item at the given index from `ItemList`, then calls `setDescription()` and `setQuantity()` on it.
 
 InventoryBRO provides a lightweight and efficient CLI-based inventory management system that allows users to:
 
@@ -357,25 +412,59 @@ Unlike complex enterprise systems, InventoryBRO focuses on:
 
 speed (fast command execution)
 simplicity (minimal setup, no GUI overhead)
-accuracy (clear, structure)
+accuracy (clear, structured output)
 
+---
 
 ## User Stories
-| Version  | As a ...  | I want to ...             | So that I can ...                                           |
-|----------|-----------|---------------------------|-------------------------------------------------------------|
-| v1.0   | new user       | see usage instructions               | refer to them when I forget how to use the application |
-| v1.0   | store owner    | add items                            | keep track of new products in my inventory             |
-| v1.0   | store owner    | delete items                         | remove products that are no longer sold                |
-| v1.0   | store owner    | edit item details                    | update product name or quantity when needed            |
-| v1.0   | store owner    | view all items                       | know what products I currently have                    |
-| v1.0   | store owner    | update item quantity via transactions| record sales or restocking accurately                  |
-| v1.0   | store owner    | exit the application                 | safely close the program after use                     |
-| v2.0   | store owner    | find items by keyword                | locate items quickly without scanning the full list    |
-| v2.0   | store owner    | view transaction history             | review past transactions for tracking and reference    |
-| v2.0   | store owner | have my inventory automatically saved   | avoid losing data when I close the application           |
-| v2.0   | store owner | load previously saved inventory         | continue managing my shop from where I left off          |
-| v2.0   | store owner | view detailed instructions for a specific command | learn how to use a command correctly                     |
 
+| Version | As a ...    | I want to ...                                     | So that I can ...                                           |
+|---------|-------------|---------------------------------------------------|-------------------------------------------------------------|
+| v1.0    | new user    | see usage instructions                            | refer to them when I forget how to use the application      |
+| v1.0    | store owner | add items                                         | keep track of new products in my inventory                  |
+| v1.0    | store owner | delete items                                      | remove products that are no longer sold                     |
+| v1.0    | store owner | edit item details                                 | update product name or quantity when needed                 |
+| v1.0    | store owner | view all items                                    | know what products I currently have                         |
+| v1.0    | store owner | update item quantity via transactions             | record sales or restocking accurately                       |
+| v1.0    | store owner | exit the application                              | safely close the program after use                         |
+| v2.0    | store owner | find items by keyword                             | locate items quickly without scanning the full list         |
+| v2.0    | store owner | view transaction history                          | review past transactions for tracking and reference         |
+| v2.0    | store owner | have my inventory automatically saved             | avoid losing data when I close the application              |
+| v2.0    | store owner | load previously saved inventory                   | continue managing my shop from where I left off             |
+| v2.0    | store owner | view detailed instructions for a specific command | learn how to use a command correctly                        |
+
+---
+
+## Non-Functional Requirements
+
+* Should work on Windows, macOS, and Linux with Java 17 installed.
+* Should respond to any command within 1 second for inventory sizes up to 1000 items.
+* Data should persist between sessions via a save file.
+* The application should not require an internet connection to function.
+
+---
+
+## Glossary
+
+* **Item** - A product in the inventory with a name, quantity, and price.
+* **Index** - The 1-based position of an item in the inventory list.
+* **Transaction** - A change in item quantity, either positive (restock) or negative (sale).
+* **CLI** - Command Line Interface; a text-based way to interact with the application.
+
+---
+
+## Instructions for manual testing
+
+1. Launch the app: `java -jar inventorybro.jar`
+2. Add items: `addItem d/Coke q/50` and `addItem d/Sprite q/30`
+3. List items: `listItems`
+4. Edit an item: `editItem 1 d/Coke Can q/45 p/1.50`
+5. Find an item: `findItem coke`
+6. Transact: `transact 1 q/-5`
+7. Delete: `deleteItem 2`
+8. Exit: `exit`
+
+---
 
 ## Proposed/Planned Features
 
@@ -384,5 +473,3 @@ accuracy (clear, structure)
 Future improvements may include:
 * Undo/redo functionality
 * Backup and restore features
-
----

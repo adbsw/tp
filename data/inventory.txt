@@ -1,1 +1,4 @@
-20 | heyo
+50 | Coke Can | 2.00
+30 | Sprite Bottle | 1.00
+20 | Potato Chips | 3.50
+111 | Apple | 1000.00

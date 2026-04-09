@@ -22,7 +22,7 @@ If you prefer typing commands instead of clicking buttons, InventoryBRO allows y
 ## Notes About Command Format
 * Words in `UPPER_CASE` represent parameters supplied by the user.
     * *Example:* `addItem d/NAME q/QUANTITY`
-* Parameters prefixed with letters (e.g., `d/`, `q/`) must be included exactly as shown.
+* Parameters prefixed with letters (e.g., `d/`, `q/`, `p/`) must be included exactly as shown.
 * Parameters can be provided in any order unless stated otherwise.
 * Commands are **case-insensitive**. Typing `add` and `ADD` will both execute the same action.
 * **INDEX** refers to the number shown in the displayed item list and must be a positive integer (1, 2, 3, ...).
@@ -39,17 +39,18 @@ Before diving into the standard commands, here are a few built-in features to ma
 ## Feature List (v2.0)
 
 ### 1. Adding an Item: `addItem`
-Adds a new product into the inventory.
+Adds a new product with a name, quantity, and price into the inventory.
 
-* **Format:** `addItem d/NAME q/INITIAL_QUANTITY`
-* **Example:** `addItem d/Coke Can q/50`
+* **Format:** `addItem d/NAME q/INITIAL_QUANTITY p/PRICE`
+* **Example:** `addItem d/Coke Can q/50 p/1.50`
 * **Expected Output:**
   ```text
-  Item added:
-  Name: Coke Can
-  Quantity: 50
-  Total items in inventory: 1
+  Added: Coke Can (Quantity: 50, Price: $1.50)
   ```
+* Quantity must be `0` or greater — negative values are rejected.
+* Price must be at least `0.01` when rounded to 2 decimal places (e.g. `p/0.001` is rejected).
+* Name cannot be empty or whitespace only.
+* An item with the same name (case-insensitive) cannot be added twice.
 
 ### 2. Deleting an Item: `deleteItem`
 Deletes an item permanently from the inventory.
@@ -58,31 +59,43 @@ Deletes an item permanently from the inventory.
 * **Example:** `deleteItem 2`
 * **Expected Output:**
   ```text
-  Item deleted:
-  2. Sprite Bottle (Quantity: 30)
-  Total items in inventory: 3
+  Noted, BRO. I've removed this item:
+  Grape (Quantity: 200, Price: $0.00)
+  Now you have 3 items in the list.
   ```
 
-### 3. Editing an Item: `editItem`
-Edits the name and/or quantity of an item based on its index. At least one of the optional fields must be provided. Existing values will be overwritten.
+### 3. Editing an Item's Description: `editDescription`
+Updates the description of an existing item in the inventory.
 
-* **Format:** `editItem INDEX (n/NAME) (q/QUANTITY)`
-* **Examples & Output:**
+* **Format:** `editDescription INDEX d/NEW_DESCRIPTION`
+* **Example:** `editDescription 1 d/Sprite Bottle`
+* **Expected Output:**
   ```text
-  > editItem 1 n/new Coke Can
-  Item edited:
-  1. new Coke Can (Quantity: 50)
-
-  > editItem 1 q/200
-  Item edited:
-  1. new Coke Can (Quantity: 200)
-
-  > editItem 1 n/Coke Can q/50 
-  Item edited:
-  1. Coke Can (Quantity: 50)
+  Item description updated: Sprite Bottle (Quantity: 50, Price: $0.00)
   ```
-  ### 4. Viewing All Items: `listItems`
-Displays a numbered list of all items currently in your inventory. Indicate a field and order to view the list of items sorted based on them. The options for `[FIELD]` are `quantity` and `price`. The options for `[ORDER]` are `high` for descending order and `low` for ascending order.
+
+### 4. Editing an Item's Price: `editPrice`
+Updates the price of an existing item in the inventory.
+
+* **Format:** `editPrice INDEX p/NEW_PRICE`
+* **Example:** `editPrice 1 p/2.50`
+* **Expected Output:**
+  ```text
+  Item price updated: Coke Can (Quantity: 50, Price: $2.50)
+  ```
+
+### 5. Editing an Item's Quantity: `editQuantity`
+Updates the quantity of an existing item in the inventory.
+
+* **Format:** `editQuantity INDEX q/NEW_QUANTITY`
+* **Example:** `editQuantity 1 q/100`
+* **Expected Output:**
+  ```text
+  Item quantity updated: Coke Can (Quantity: 100, Price: $0.00)
+  ```
+
+### 6. Viewing All Items: `listItems`
+Displays a numbered list of all items currently in your inventory.
 
 * **Format:** `listItems` or `listItems [FIELD] [ORDER]`
 * **Examples and output:**
@@ -106,7 +119,7 @@ Displays a numbered list of all items currently in your inventory. Indicate a fi
   3. Potato Chips (Quantity: 20, Price: $3.00)
   ```
 
-### 5. Finding an Item: `findItem`
+### 7. Finding an Item: `findItem`
 Searches for items whose descriptions contain your specified keyword. This is case-insensitive.
 
 * **Format:** `findItem KEYWORD`
@@ -114,10 +127,10 @@ Searches for items whose descriptions contain your specified keyword. This is ca
 * **Expected Output:**
   ```text
   Here are the matching items in your inventory:
-  1. Coke Can (Quantity: 50)
+  1. Coke Can (Quantity: 50, Price: $1.50)
   ```
 
-### 6. Filtering Items: `filterItem`
+### 8. Filtering Items: `filterItem`
 Displays only the items that match one or more field-based predicates. Predicates can be combined using `AND` (both must match) and `OR` (either must match). `AND` binds tighter than `OR`.
 
 Supported fields and value types:
@@ -126,7 +139,7 @@ Supported fields and value types:
 | :--- | :--- | :--- |
 | `description` | `=` `<` `>` | Text enclosed in **single quotes** (e.g. `'Coke'`) |
 | `quantity` | `=` `<` `>` | Non-negative integer (e.g. `10`) |
-| `price` | `=` `<` `>` | Non-negative integer (e.g. `5`) |
+| `price` | `=` `<` `>` | Non-negative number with at most 2 decimal places (e.g. `1.50`) |
 
 * **Format:** `filterItem FIELD OPERATOR VALUE [AND|OR FIELD OPERATOR VALUE ...]`
 * **Example 1 (single predicate):** `filterItem quantity > 10`
@@ -146,19 +159,25 @@ Supported fields and value types:
   1. Coke Can (Quantity: 50, Price: $0.00)
   2. Sprite Bottle (Quantity: 30, Price: $0.00)
   ```
-* **Example 4 (price filter):** `filterItem price < 5`
+* **Example 4 (price filter — integer):** `filterItem price < 5`
   ```text
   Here are the filtered items:
   1. Potato Chips (Quantity: 20, Price: $2.00)
+  ```
+* **Example 5 (price filter — decimal):** `filterItem price > 1.50`
+  ```text
+  Here are the filtered items:
+  1. Coke Can (Quantity: 50, Price: $2.00)
+  2. Potato Chips (Quantity: 20, Price: $3.50)
   ```
 * **No match output:**
   ```text
   No items match the given filter.
   ```
 
-> **Note:** Description values must always be wrapped in single quotes. Quantity and price values must be whole numbers — decimals are not accepted.
+> **Note:** Description values must always be wrapped in single quotes. Quantity values must be whole numbers — decimals are not accepted. Price values accept up to 2 decimal places (e.g. `1.50`); values with more than 2 decimal places (e.g. `1.999`) are rejected. Comparison is done on the price rounded to 2 decimal places.
 
-### 7. Recording a Transaction: `transact`
+### 9. Recording a Transaction: `transact`
 Updates the stock quantity after a sale or restock.
 * Use a **negative number** for a sale.
 * Use a **positive number** for a restock.
@@ -175,23 +194,23 @@ Updates the stock quantity after a sale or restock.
   Sprite Bottle new quantity: 40
   ```
 
-### 8. Viewing Transaction History: `showHistory`
+### 10. Viewing Transaction History: `showHistory`
 Displays a complete, numbered list of all past transactions (sales and restocks) recorded by the application.
 
 * **Format:** `showHistory`
 * **Example Output (With History):**
   ```text
   Transaction History:
-  1. Coke Can: -5
-  2. Sprite Bottle: +10
-  3. Potato Chips: -2
+  1. Sprite Bottle | 10 | 2026-04-01 11:22
+  2. Coke Can | -5 | 2026-04-01 11:22
+  3. Coke Can | -50 | 2026-04-01 11:22
   ```
 * **Example Output (Empty History):**
   ```text
   No transaction history found.
   ```
 
-### 9. Getting Help: `help`
+### 11. Getting Help: `help`
 Displays a quick-reference list of all available commands, or provides detailed instructions and examples for a specific command.
 
 * **Format 1 (General Summary):** `help`
@@ -203,15 +222,18 @@ Displays a quick-reference list of all available commands, or provides detailed 
     * **Expected Output:**
       ```text
       addItem:
-      Adds a new item of a given name and quantity to the current inventory list.
-  
-      Example usage: addItem d/Apples q/10
-      This adds an item named 'Apples' of quantity '10' to the inventory list.
+      Adds a new item with a given name, quantity, and price to the current inventory list.
+      - Name (d/): cannot be empty.
+      - Quantity (q/): must be 0 or greater (negative values are not allowed).
+      - Price (p/): must be at least 0.01 when rounded to 2 decimal places (e.g. 0.001 is rejected).
+
+      Format: addItem d/NAME q/INITIAL_QUANTITY p/PRICE
+
+      Example usage: addItem d/Apples q/10 p/1.50
+      This adds an item named 'Apples' with quantity '10' and price '$1.50' to the inventory list.
       ```
 
-* **Format:** `help`
-
-### 10. Exiting the Program: `exit`
+### 12. Exiting the Program: `exit`
 Safely closes the application.
 
 * **Format:** `exit`
@@ -286,14 +308,15 @@ If you accidentally misspell a command, InventoryBRO will attempt to detect the 
 
 | Action | Format | Example |
 | :--- | :--- | :--- |
-| **Add item** | `addItem d/NAME q/QUANTITY` | `addItem d/Coke q/50` |
+| **Add item** | `addItem d/NAME q/QUANTITY p/PRICE` | `addItem d/Coke q/50 p/1.50` |
 | **Delete item** | `deleteItem INDEX` | `deleteItem 2` |
-| **Edit item** | `editItem INDEX (n/NAME) (q/QUANTITY)` | `editItem 2 n/New Coke Name` |
+| **Edit description** | `editDescription INDEX d/NEW_DESCRIPTION` | `editDescription 1 d/Coke Can` |
+| **Edit price** | `editPrice INDEX p/NEW_PRICE` | `editPrice 1 p/2.50` |
+| **Edit quantity** | `editQuantity INDEX q/NEW_QUANTITY` | `editQuantity 1 q/100` |
 | **List items** | `listItems` | `listItems` |
 | **Find item** | `findItem KEYWORD` | `findItem apple` |
 | **Filter items** | `filterItem FIELD OP VALUE [AND\|OR ...]` | `filterItem quantity > 10` |
 | **Record transaction** | `transact INDEX q/CHANGE` | `transact 1 q/-3` |
-| **View History** | `showHistory` | `showHistory` |
 | **Get Help** | `help` | `help` |
 | **Exit** | `exit` | `exit` |
 
@@ -307,4 +330,5 @@ InventoryBRO v2.0 officially supports:
 * Automatic background saving
 
 **Planned for Future Versions:**
+* Add price tracking to items
 * Low-stock automated alerts
