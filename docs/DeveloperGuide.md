@@ -21,7 +21,13 @@
     * [Storage System](#storage-system)
     * [Command Autocompletion (Trie & JLine)](#command-autocompletion)
     * [Typo Detection](#typo-detection)
-4. [Proposed/Planned Features](#proposedplanned-features)
+4. [Product Scope](#product-scope)
+   * [Target User Profile](#target-user-profile)
+   * [User Stories](#user-stories)
+   * [Non-Functional Requirements](#non-functional-requirements)
+   * [Glossary](#glossary)
+   * [Instructions for manual testing](#instructions-for-manual-testing)
+5. [Proposed/Planned Features](#proposedplanned-features)
     * [Storage & Data Persistence](#storage--data-persistence)
 
 ---
@@ -279,12 +285,13 @@ The `ShowTransactionHistoryCommand` retrieves and displays all past transactions
 ![Show List Command Class Diagram](diagrams/ListCommandClassDiagram.png)
 
 **Step-by-step Execution:**
-1. When the user inputs `listItems`, the parser instantiates a new `ListCommand` with the raw input string.
+1. When the user inputs `listItems` or `listItems price high`, the parser instantiates a new `ListCommand` with the raw input string.
 2. The `execute` method of `ListCommand` is called.
 3. The `execute` method creates `ListCommandValidator` with the raw input string and calls the `validate` method.
 4. The `validate` method checks that the raw input string follows the correct format for `listItems` command. If the correct format is not followed, it will throw an `IllegalArgumentException` and halt the execution.
 5. Control is returned to the `execute` method which checks if the inventory list is empty and passes a message that the inventory is empty to the `ui` to display to the user.
-6. Otherwise, it passes the list of items in the inventory to the `ui` to display to the user.
+6. Otherwise, checks if the input contains descriptors for sorting. If it does, it retrieves the sorted list of items by the property and order given in the input and passes it to the `ui` to display to the user.
+7. Else, it passes the default order of the list of items to the `ui` to display to the user.
 
 **Figure 26: List Command Sequence Diagram**
 ![List Command Sequence Diagram](diagrams/ListCommandSequenceDiagram.png)
@@ -418,20 +425,21 @@ accuracy (clear, structured output)
 
 ## User Stories
 
-| Version | As a ...    | I want to ...                                     | So that I can ...                                           |
-|---------|-------------|---------------------------------------------------|-------------------------------------------------------------|
-| v1.0    | new user    | see usage instructions                            | refer to them when I forget how to use the application      |
-| v1.0    | store owner | add items                                         | keep track of new products in my inventory                  |
-| v1.0    | store owner | delete items                                      | remove products that are no longer sold                     |
-| v1.0    | store owner | edit item details                                 | update product name or quantity when needed                 |
-| v1.0    | store owner | view all items                                    | know what products I currently have                         |
-| v1.0    | store owner | update item quantity via transactions             | record sales or restocking accurately                       |
-| v1.0    | store owner | exit the application                              | safely close the program after use                         |
-| v2.0    | store owner | find items by keyword                             | locate items quickly without scanning the full list         |
-| v2.0    | store owner | view transaction history                          | review past transactions for tracking and reference         |
-| v2.0    | store owner | have my inventory automatically saved             | avoid losing data when I close the application              |
-| v2.0    | store owner | load previously saved inventory                   | continue managing my shop from where I left off             |
-| v2.0    | store owner | view detailed instructions for a specific command | learn how to use a command correctly                        |
+| Version | As a ...    | I want to ...                                                  | So that I can ...                                            |
+|---------|-------------|----------------------------------------------------------------|--------------------------------------------------------------|
+| v1.0    | new user    | see usage instructions                                         | refer to them when I forget how to use the application       |
+| v1.0    | store owner | add items                                                      | keep track of new products in my inventory                   |
+| v1.0    | store owner | delete items                                                   | remove products that are no longer sold                      |
+| v1.0    | store owner | edit item details                                              | update product name or quantity when needed                  |
+| v1.0    | store owner | view all items                                                 | know information of products I currently have                |
+| v1.0    | store owner | update item quantity via transactions                          | record sales or restocking accurately                        |
+| v1.0    | store owner | exit the application                                           | safely close the program after use                           |
+| v2.0    | store owner | find items by keyword                                          | locate items quickly without scanning the full list          |
+| v2.0    | store owner | view transaction history                                       | review past transactions for tracking and reference          |
+| v2.0    | store owner | have my inventory automatically saved                          | avoid losing data when I close the application               |
+| v2.0    | store owner | load previously saved inventory                                | continue managing my shop from where I left off              |
+| v2.0    | store owner | view the list of items sorted by an item property of my choice | quickly view which items have, for example, lower quantities |
+| v2.0    | store owner | view detailed instructions for a specific command              | learn how to use a command correctly                         |
 
 ---
 
@@ -456,9 +464,12 @@ accuracy (clear, structured output)
 ## Instructions for manual testing
 
 1. Launch the app: `java -jar inventorybro.jar`
-2. Add items: `addItem d/Coke q/50` and `addItem d/Sprite q/30`
+2. Add items: `addItem d/Coke q/50 p/1` and `addItem d/Sprite q/30 p/2`
 3. List items: `listItems`
-4. Edit an item: `editItem 1 d/Coke Can q/45 p/1.50`
+4. Edit an item: 
+   * `editDescription 1 d/Coke Can`
+   * `editPrice 1 p/1.50`
+   * `editQuantity 1 q/45`
 5. Find an item: `findItem coke`
 6. Transact: `transact 1 q/-5`
 7. Delete: `deleteItem 2`

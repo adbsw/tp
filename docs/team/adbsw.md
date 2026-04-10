@@ -14,10 +14,14 @@ InventoryBro is an inventory management tracking application interacted via a CL
   * Added the ability to view summaries of all commands that users can use in the application, or view detailed instructions of a particular command specified by the users.
 * Enhancements to code:
   * Updated ItemList to have a method for sorting the list of items by a property and order and returning the sorted list.
+* Contributions to the UG:
+  * Sections:
+    * Added: Feature List (v2.0) - Viewing All Items: `listItems`, Feature List (v2.0) - Getting Help: `help`
+  * Sections updated:
+    * Command Summary 
 * Contributions to the DG:
-  * Sections :
-    * Implementation
-      * Viewing list of items in the inventory 
-      * Viewing help messages of commands
+  * Sections:
+    * Added: Implementation - Viewing list of items in the inventory, Implementation - Viewing help messages of commands
+    * Updated: Product scope - User Stories, Product scope - Instructions for manual testing
   * UML diagrams:
     * Added: ListCommand class diagram, ListCommand sequence diagram, HelpCommand class diagram, HelpCommand sequence diagram
