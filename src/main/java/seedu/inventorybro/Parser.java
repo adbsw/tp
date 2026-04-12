@@ -19,9 +19,10 @@ import seedu.inventorybro.command.TransactCommand;
 public class Parser {
     private static final TypoDetector TYPO_DETECTOR = new TypoDetector();
 
-    public static void parse(String line, ItemList items, Ui ui) {
+    public static void parse(String line, ItemList items, CategoryList categories, Ui ui) {
         assert line != null : "Input line should not be null";
         assert items != null : "ItemList should not be null";
+        assert categories != null : "CategoryList should not be null";
         assert ui != null : "Ui should not be null";
 
         Command command = parseCommand(line);
@@ -30,7 +31,7 @@ public class Parser {
             return;
         }
 
-        command.execute(items, ui);
+        command.execute(items, categories, ui);
     }
 
     private static Command parseCommand(String line) {

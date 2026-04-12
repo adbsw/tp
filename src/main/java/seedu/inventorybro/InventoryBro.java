@@ -8,11 +8,13 @@ import java.io.IOException;
 public class InventoryBro {
     private Ui ui;
     private ItemList items;
+    private CategoryList categories;
     private final ArrayStorage arrayStorage;
     //private final TransactionStorage transactionStorage;
 
     public InventoryBro() {
         ui = new Ui();
+        categories = new CategoryList();
         arrayStorage = new ArrayStorage();
         //transactionStorage = new TransactionStorage();
         items = arrayStorage.loadItemList();
@@ -32,7 +34,7 @@ public class InventoryBro {
             ui.showLine();
             try {
                 // Pass the ui object into the parser so the commands can use it to print!
-                Parser.parse(fullCommand, items, ui);
+                Parser.parse(fullCommand, items, categories, ui);
             } catch (ExitException e) {
                 ui.showLine();
                 System.exit(0);
