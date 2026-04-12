@@ -74,7 +74,7 @@ public class Parser {
             ui.showMessage("Do you mean " + suggestion.get() + "?");
         } else {
             ui.showError("Invalid command, please try addItem, deleteItem, editDescription, editPrice," +
-                    " editQuantity, transact, showHistory, listItems, help, exit");
+                    " editQuantity, findItem, filterItem, transact, showHistory, listItems, help, exit");
         }
     }
 

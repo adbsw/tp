@@ -37,8 +37,8 @@ public class HelpCommand implements Command {
                               to the user that the inventory is empty if there are no items.
             help:             Displays summaries of each command to the user, or displays a detailed
                               instruction of a specified command.
-            exit:             Closes the application. All saved data can be found in '/data/inventory.txt`
-                              and '/data/transaction.txt'.
+            exit:             Closes the application. All saved data can be found in './data/inventory.txt`
+                              and './data/transactions.txt'.
 
             For further details on a particular command, specify it using 'help [COMMAND_NAME]'.
             """;
@@ -190,10 +190,9 @@ public class HelpCommand implements Command {
             """;
     private static final String HELPEXITMESSAGE = """
             exit:
-            Closes the application. You can view your saved data in '/data/inventory.txt` and
-            your transaction history in '/data/transaction.txt'. If the folder or files do not
-            exist, InventoryBRO will automatically create it for you
-            upon startup.
+            Closes the application. You can view your saved data in './data/inventory.txt' and
+            your transaction history in './data/transactions.txt'. If the folder or files do not
+            exist, InventoryBRO will automatically create it for you upon startup.
 
             Example usage: exit
             """;
