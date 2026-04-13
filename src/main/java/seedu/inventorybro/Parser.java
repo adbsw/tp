@@ -9,6 +9,7 @@ import seedu.inventorybro.command.DeleteCommand;
 import seedu.inventorybro.command.EditDescriptionCommand;
 import seedu.inventorybro.command.EditPriceCommand;
 import seedu.inventorybro.command.EditQuantityCommand;
+import seedu.inventorybro.command.EditCategoryCommand;
 import seedu.inventorybro.command.ExitCommand;
 import seedu.inventorybro.command.FilterCommand;
 import seedu.inventorybro.command.FindCommand;
@@ -50,6 +51,8 @@ public class Parser {
             return new EditDescriptionCommand(trimmedLine);
         case "editprice":
             return new EditPriceCommand(trimmedLine);
+        case "editcategory":
+            return new EditCategoryCommand(trimmedLine);
         case "transact":
             return new TransactCommand(trimmedLine);
         case "filteritem":
