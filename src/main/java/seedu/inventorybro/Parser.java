@@ -62,7 +62,8 @@ public class Parser {
         case "filteritem":
             return new FilterCommand(normalize(trimmedLine, CommandWord.FILTER_ITEM.getWord()));
         case "showhistory":
-            return new ShowTransactionHistoryCommand(normalize(trimmedLine, CommandWord.SHOW_HISTORY.getWord()), transactionStorage);
+            return new ShowTransactionHistoryCommand(normalize(trimmedLine, CommandWord.SHOW_HISTORY.getWord()),
+                    transactionStorage);
         case "listitems":
             return new ListCommand(normalize(trimmedLine, CommandWord.LIST_ITEMS.getWord()));
         case "finditem":
