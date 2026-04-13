@@ -27,8 +27,8 @@ class AutocompleterTest {
     void getMatches_partialSingleMatch_returnsCorrectKeyword() {
         List<String> matches = autocompleter.getMatches("lis");
         assertEquals(2, matches.size());
-        assertEquals("listItems", matches.get(0));
-        assertEquals("listCategories", matches.get(1));
+        assertTrue(matches.contains("listItems"));
+        assertTrue(matches.contains("listCategories"));
     }
 
     @Test

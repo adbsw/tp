@@ -87,6 +87,7 @@ class ListCommandValidatorTest {
                 IllegalArgumentException.class,
                 () -> new ListCommandValidator("LiStItEms").validate(items, categories)
         );
-        assertEquals("Invalid listItems format! Use: listItems [c/CATEGORY_NAME] [price/quantity] [high/low]", ex.getMessage());
+        assertEquals("Invalid listItems format! Use: listItems " +
+                "[c/CATEGORY_NAME] [price/quantity] [high/low]", ex.getMessage());
     }
 }
