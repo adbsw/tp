@@ -405,4 +405,4 @@ InventoryBRO v2.1 officially supports:
 
 **Planned for Future Versions:**
 * Viewing earnings
-* Low-stock automated alerts
+* Automated low-stock alerts
