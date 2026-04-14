@@ -5,13 +5,14 @@ skinparam classAttributeIconSize 0
 hide circle
 
 interface Command <<interface>> {
+    + execute(ItemList items, CategoryList categories, Ui ui): void
     + execute(items: ItemList, categories: CategoryList, ui: Ui): void
 }
 
 class FilterCommand {
     - input: String
     + FilterCommand(input: String)
-    + execute(items: ItemList, categories: CategoryList, ui: Ui): void
+    + execute(ItemList items, CategoryList categories, Ui ui): void
     - buildAndGroups(predicates: List, operators: List): List
     - collectMatchingItems(items: ItemList, andGroups: List): List
     - passesFilter(item: Item, andGroups: List): boolean
