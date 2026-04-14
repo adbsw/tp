@@ -29,6 +29,7 @@ activate AddCommand
 AddCommand --> Parser : d
 deactivate AddCommand
 
+Parser -> AddCommand : execute(ItemList items, CategoryList categories, Ui ui)
 Parser -> AddCommand : execute(items, categories, ui)
 activate AddCommand
 
